@@ -106,13 +106,20 @@ public:
 	//Return Calculated Right Click Damage
 	float GetCalculatedRightClickDamage();
 
+	//Play AnimMontage, Target is Weapon's OwnerCharacter
+	void PlayAttackAnimMontage();
+
 
 public:
-	//BaseWeapon has StaticMesh
+	// BaseWeapon has StaticMesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 	UStaticMeshComponent* StaticMesh;
 
-	//Enum Weapon Type
+	// Enum Weapon Type
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 	EItemType eWeaponType;
+
+	// Use When Attack
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* AttackMontage;
 };

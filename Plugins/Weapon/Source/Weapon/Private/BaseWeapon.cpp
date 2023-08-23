@@ -73,6 +73,7 @@ void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	// If ( WeaponInterfaceObj ) is nullptr = return
 	if (WeaponInterfaceObj == nullptr)
 	{
+		UE_LOG(LogClass, Warning, TEXT("WeaponInterfaceObj::nullptr"));
 		return;
 	}
 
@@ -128,8 +129,9 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
 
-		AddLeftClickCount();
 		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
+
+		PlayAttackAnimMontage();
 	}
 
 }
@@ -186,5 +188,32 @@ float ABaseWeapon::GetCalculatedRightClickDamage()
 	return RightClickDamage;
 }
 
+void ABaseWeapon::PlayAttackAnimMontage()
+{
+	UE_LOG(LogClass, Warning, TEXT("PlayAttackAnimMontage"));
+	//Play Attack AnimMontage
 
+	//Check Weapon has OwnerCharacter
+	if (OwnerCharacter == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("OwnerCharacter::nullptr"));
+		return;
+	}
 
+	//Check Any Montage Playing
+	if (OwnerCharacter->GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() == true)
+	{
+		UE_LOG(LogClass, Warning, TEXT("IsAnyMontagePlaying::true"));
+		return;
+	}
+
+	// If AttackMontage Is Not Valid = return
+	if (IsValid(AttackMontage) == false)
+	{
+		UE_LOG(LogClass, Warning, TEXT("IsValid::AttackMontage, false"));
+		return;
+	}
+
+	AddLeftClickCount();
+	OwnerCharacter->PlayAnimMontage(AttackMontage);
+}

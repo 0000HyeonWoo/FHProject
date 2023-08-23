@@ -133,43 +133,48 @@ void AFHProjectCharacter::Res_DoRollMove_Implementation()
 {
 	UE_LOG(LogClass, Warning, TEXT("DoRollMove"));
 
-	// If StandToRollMontage Is Not Valid = return
-	if (IsValid(StandToRollMontage) == false)
+	// Play Target AnimMontage When Target AnimMontage Is not Playing
+	if (bIsMontagePlaying() == true)
 	{
-		return;
-	}
-
-	// If RunToRollMontage Is Not Valid = return
-	if (IsValid(RunToRollMontage) == false)
-	{
+		UE_LOG(LogClass, Warning, TEXT("bIsMontagePlaying::true"));
 		return;
 	}
 
 	// If Character Is Falling = return
 	if (GetCharacterMovement()->IsFalling() == true)
 	{
+		UE_LOG(LogClass, Warning, TEXT("IsFalling::true"));
 		return;
 	}
 
 	// if Character Is Crouched = return
 	if (bIsCrouched == true)
 	{
+		UE_LOG(LogClass, Warning, TEXT("bIsCrouched::true"));
 		return;
 	}
-	
+
+	// If StandToRollMontage Is Not Valid = return
+	if (IsValid(StandToRollMontage) == false)
+	{
+		UE_LOG(LogClass, Warning, TEXT("IsValid::StandToRollMontage, false"));
+		return;
+	}
+
+	// If RunToRollMontage Is Not Valid = return
+	if (IsValid(RunToRollMontage) == false)
+	{
+		UE_LOG(LogClass, Warning, TEXT("IsValid::RunToRollMontage, false"));
+		return;
+	}
+
 	// Check Max Speed And Play AnimMontage by Speed Value
 	if (GetCharacterMovement()->GetMaxSpeed() <= 500.0f)
 	{
 		// Check Montage Is Playing
 		//bIsMontagePlaying = GetMesh()->GetAnimInstance()->IsAnyMontagePlaying();
 
-		// Play Target AnimMontage When Target AnimMontage Is not Playing
-		if (bIsMontagePlaying() == true)
-		{
-			return;
-		}
-
-		UE_LOG(LogClass, Warning, TEXT("StandToRollMontage"));
+		UE_LOG(LogClass, Warning, TEXT("PlayAnimMontage::StandToRollMontage"));
 		PlayAnimMontage(StandToRollMontage);
 	}
 	else if (GetCharacterMovement()->GetMaxSpeed() > 500.0f)
@@ -177,13 +182,7 @@ void AFHProjectCharacter::Res_DoRollMove_Implementation()
 		// Check Montage Is Playing
 		//bIsMontagePlaying = GetMesh()->GetAnimInstance()->IsAnyMontagePlaying();
 
-		// Play Target AnimMontage When Target AnimMontage Is not Playing
-		if (bIsMontagePlaying() == true)
-		{
-			return;
-		}
-
-		UE_LOG(LogClass, Warning, TEXT("RunToRollMontage"));
+		UE_LOG(LogClass, Warning, TEXT("PlayAnimMontage::RunToRollMontage"));
 		PlayAnimMontage(RunToRollMontage);
 	}
 }
