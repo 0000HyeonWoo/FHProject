@@ -39,4 +39,8 @@ public:
 	// Event Detach From Character's WeaponSocket
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
 	void Event_DetachFromActor(ACharacter* TargetCharacter);
+
+	// Event Left Click Attack
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
+	void Event_LeftClickAttack(bool IsPressed);
 };

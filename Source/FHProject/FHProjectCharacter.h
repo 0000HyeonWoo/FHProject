@@ -182,6 +182,7 @@ public:
 	//EquipWeapon
 	AActor* EquipWeapon;
 
+
 public:
 	// Check Any MontagePlaying
 	UFUNCTION(BlueprintCallable)

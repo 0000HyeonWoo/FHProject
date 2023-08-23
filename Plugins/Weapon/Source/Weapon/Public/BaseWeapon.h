@@ -45,6 +45,12 @@ public:
 
 	virtual void Event_DetachFromActor_Implementation(ACharacter* TargetCharacter) override;
 
+	// Event Left Click Attack
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Event_LeftClickAttack(bool IsPressed);
+
+	virtual void Event_LeftClickAttack_Implementation(bool IsPressed) override;
+
 
 protected:
 	//Owner Character

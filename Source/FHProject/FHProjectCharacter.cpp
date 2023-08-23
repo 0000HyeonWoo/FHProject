@@ -82,6 +82,7 @@ AFHProjectCharacter::AFHProjectCharacter()
 
 	// Set Character Can Crouch
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
 }
 
 // Network Setting
@@ -238,7 +239,6 @@ void AFHProjectCharacter::Res_DropItem_Implementation()
 	//Client
 	UE_LOG(LogClass, Warning, TEXT("Res_DropItem"));
 
-
 	// Cast WeaponInterface - EquipWeapon
 	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(EquipWeapon);
 
@@ -265,12 +265,6 @@ void AFHProjectCharacter::Res_LeftClickAttack_Implementation(bool IsPressed)
 {
 	UE_LOG(LogClass, Warning, TEXT("Res_LeftClickAttack"));
 
-	//Check Press LeftClick true
-	if (IsPressed == true)
-	{
-		return;
-	}
-
 	// Cast WeaponInterface - EquipWeapon
 	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(EquipWeapon);
 
@@ -279,6 +273,9 @@ void AFHProjectCharacter::Res_LeftClickAttack_Implementation(bool IsPressed)
 	{
 		return;
 	}
+
+	WeaponInterfaceObj->Execute_Event_LeftClickAttack(EquipWeapon, IsPressed);
+
 }
 
 void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AActor* Item)
@@ -516,6 +513,8 @@ void AFHProjectCharacter::StopRightClickInput(const FInputActionValue& Value)
 
 void AFHProjectCharacter::LeftClickInput(const FInputActionValue& Value)
 {
+	//Left Click Input
+
 	UE_LOG(LogClass, Warning, TEXT("LeftClickInput"));
 
 	//Check Character has EquipWeapon
@@ -533,6 +532,8 @@ void AFHProjectCharacter::LeftClickInput(const FInputActionValue& Value)
 
 void AFHProjectCharacter::StopLeftClickInput(const FInputActionValue& Value)
 {
+	//Stop Left Click Input
+
 	UE_LOG(LogClass, Warning, TEXT("StopLeftClickInput"));
 
 	//Check Character has EquipWeapon
@@ -542,6 +543,8 @@ void AFHProjectCharacter::StopLeftClickInput(const FInputActionValue& Value)
 
 		return;
 	}
+
+	//UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 
 	//Server
 	//IsPressed is false

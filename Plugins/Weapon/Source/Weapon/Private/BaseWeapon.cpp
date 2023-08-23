@@ -102,5 +102,19 @@ void ABaseWeapon::Event_DetachFromActor_Implementation(ACharacter* TargetCharact
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 }
 
+void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
+{
+	UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack"));
+
+	if (IsPressed == true)
+	{
+		UE_LOG(LogClass, Warning, TEXT("IsPressed true"));
+	}
+	else if (IsPressed == false)
+	{
+		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
+	}
+}
+
 
 
