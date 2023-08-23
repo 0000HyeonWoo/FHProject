@@ -175,15 +175,17 @@ float ABaseWeapon::GetCalculatedRightClickDamage()
 	//RightClickDamage increase by LeftClickCount Value
 	//Each Left Click increase Damage Value 10%
 	RightClickDamage = GetClickAttackDamage() + (GetClickAttackDamage() * (GetLeftClickCount() * 0.1f));
-	UE_LOG(LogClass, Warning, TEXT("RightClickDamage :: %f"), RightClickDamage);
 
 	//Check Calculated Damage Value
 	if (RightClickDamage > GetMaxRightClickDamage())
 	{
+		UE_LOG(LogClass, Warning, TEXT("RightClickDamage > GetMaxRightClickDamage"));
+		UE_LOG(LogClass, Warning, TEXT("RightClickDamage Changed :: %f"), RightClickDamage);
 		//If Calculated Value bigger than Max Value, Set Calculated Value to Max Value
 		RightClickDamage = GetMaxRightClickDamage();
 	}
-	UE_LOG(LogClass, Warning, TEXT("RightClickDamage Changed :: %f"), RightClickDamage);
+
+	UE_LOG(LogClass, Warning, TEXT("RightClickDamage :: %f"), RightClickDamage);
 
 	return RightClickDamage;
 }
