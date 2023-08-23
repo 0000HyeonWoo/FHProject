@@ -146,23 +146,38 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
 
 		float RightClickDamage;
-		RightClickDamage = 0;
-		UE_LOG(LogClass, Warning, TEXT("Calculate Damage :: %d"), GetLeftClickCount() * 0.1f);
-
-		RightClickDamage = GetClickAttackDamage() + (GetClickAttackDamage() * (GetLeftClickCount() * 0.1f));
-		UE_LOG(LogClass, Warning, TEXT("RightClickDamage :: %f"), RightClickDamage);
-
-		if (RightClickDamage > GetMaxRightClickDamage())
-		{
-			RightClickDamage = GetMaxRightClickDamage();
-		}
-
-		UE_LOG(LogClass, Warning, TEXT("RightClickDamage Changed :: %f"), RightClickDamage);
+		RightClickDamage = GetCalculatedRightClickDamage();
+		UE_LOG(LogClass, Warning, TEXT("CalculatedRightClickDamage :: %d"), RightClickDamage);
 
 
 		InitializeLeftClickCount();
 		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 	}
+}
+
+float ABaseWeapon::GetCalculatedRightClickDamage()
+{
+	UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage"));
+	//Calculate Right Click Damage
+
+	//Create Return Value
+	float RightClickDamage;
+	RightClickDamage = 0;
+
+	//RightClickDamage increase by LeftClickCount Value
+	RightClickDamage = GetClickAttackDamage() + (GetClickAttackDamage() * (GetLeftClickCount() * 0.1f));
+	UE_LOG(LogClass, Warning, TEXT("RightClickDamage :: %f"), RightClickDamage);
+
+	//Check Calculated Damage Value
+	if (RightClickDamage > GetMaxRightClickDamage())
+	{
+		//If Calculated Value bigger than Max Value, Set Calculated Value to Max Value
+		RightClickDamage = GetMaxRightClickDamage();
+	}
+	UE_LOG(LogClass, Warning, TEXT("RightClickDamage Changed :: %f"), RightClickDamage);
+
+
+	return RightClickDamage;
 }
 
 

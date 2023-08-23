@@ -100,6 +100,11 @@ public:
 
 
 public:
+	//Return Calculated Right Click Damage
+	float GetCalculatedRightClickDamage();
+
+
+public:
 	//BaseWeapon has StaticMesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 	UStaticMeshComponent* StaticMesh;
