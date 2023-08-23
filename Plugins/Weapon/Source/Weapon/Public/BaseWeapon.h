@@ -81,6 +81,9 @@ public:
 	//Return LeftClickCount
 	int GetLeftClickCount() { return LeftClickCount; };
 
+	//Add LeftClickCount
+	void AddLeftClickCount() { LeftClickCount += 1; };
+
 	//Initialize LeftClickCount
 	void InitializeLeftClickCount() { LeftClickCount = 0; };
 

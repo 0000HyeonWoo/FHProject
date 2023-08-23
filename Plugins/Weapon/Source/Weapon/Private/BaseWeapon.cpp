@@ -126,7 +126,7 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
 
-		LeftClickCount += 1;
+		AddLeftClickCount();
 		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 	}
 
