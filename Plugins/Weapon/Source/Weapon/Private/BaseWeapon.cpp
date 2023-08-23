@@ -115,7 +115,7 @@ void ABaseWeapon::Event_DetachFromActor_Implementation(ACharacter* TargetCharact
 
 void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 {
-	//Character Left Click Event Active this function
+	//Character Left Click Input Event Active this function
 	UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack"));
 
 	if (IsPressed == true)
@@ -134,7 +134,7 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 
 void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 {
-	//Character Right Click Event Active this function
+	//Character Right Click Input Event Active this function
 	UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack"));
 
 	if (IsPressed == true)
@@ -149,7 +149,7 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 		RightClickDamage = GetCalculatedRightClickDamage();
 		UE_LOG(LogClass, Warning, TEXT("CalculatedRightClickDamage :: %d"), RightClickDamage);
 
-
+		//After Calculate Damage, Initialize LeftClickCount 0;
 		InitializeLeftClickCount();
 		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 	}
@@ -164,7 +164,12 @@ float ABaseWeapon::GetCalculatedRightClickDamage()
 	float RightClickDamage;
 	RightClickDamage = 0;
 
+	// ** Right Click Damage = Default Damage + ( Default Damage * (Click Count * 0.1f)) **
+	// Default Damage = Left Click Damage
+	// (Click Count * 0.1f) -> 1 = 0.1, 2 = 0.2, 3 = 0.3,,,
+
 	//RightClickDamage increase by LeftClickCount Value
+	//Each Left Click increase Damage Value 10%
 	RightClickDamage = GetClickAttackDamage() + (GetClickAttackDamage() * (GetLeftClickCount() * 0.1f));
 	UE_LOG(LogClass, Warning, TEXT("RightClickDamage :: %f"), RightClickDamage);
 

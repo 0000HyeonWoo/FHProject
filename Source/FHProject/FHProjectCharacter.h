@@ -201,6 +201,7 @@ public:
 	UPROPERTY(Replicated)
 	FRotator PlayerRotation;
 
+	//Return Player index 0's Rotation or just PlayerRotation
 	UFUNCTION(BlueprintPure)
 	FRotator GetPlayerRotation();
 
