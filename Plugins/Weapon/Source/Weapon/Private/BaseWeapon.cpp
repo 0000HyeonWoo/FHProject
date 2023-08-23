@@ -116,5 +116,19 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 	}
 }
 
+void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
+{
+	UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack"));
+
+	if (IsPressed == true)
+	{
+		UE_LOG(LogClass, Warning, TEXT("IsPressed true"));
+	}
+	else if (IsPressed == false)
+	{
+		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
+	}
+}
+
 
 

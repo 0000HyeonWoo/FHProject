@@ -161,6 +161,14 @@ public:
 	void Res_LeftClickAttack(bool IsPressed);
 
 
+	//Right Click Attack Action
+	UFUNCTION(Server, Reliable)
+	void Req_RightClickAttack(bool IsPressed);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Res_RightClickAttack(bool IsPressed);
+
+
 public:
 	//WeaponInterface Event
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)

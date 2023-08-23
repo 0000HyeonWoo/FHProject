@@ -51,6 +51,12 @@ public:
 
 	virtual void Event_LeftClickAttack_Implementation(bool IsPressed) override;
 
+	// Event Right Click Attack
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Event_RightClickAttack(bool IsPressed);
+
+	virtual void Event_RightClickAttack_Implementation(bool IsPressed) override;
+
 
 protected:
 	//Owner Character

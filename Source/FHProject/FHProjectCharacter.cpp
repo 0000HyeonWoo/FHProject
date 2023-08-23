@@ -278,6 +278,28 @@ void AFHProjectCharacter::Res_LeftClickAttack_Implementation(bool IsPressed)
 
 }
 
+void AFHProjectCharacter::Req_RightClickAttack_Implementation(bool IsPressed)
+{
+	//Client
+	Res_RightClickAttack(IsPressed);
+}
+
+void AFHProjectCharacter::Res_RightClickAttack_Implementation(bool IsPressed)
+{
+	UE_LOG(LogClass, Warning, TEXT("Res_RightClickAttack"));
+
+	// Cast WeaponInterface - EquipWeapon
+	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(EquipWeapon);
+
+	// Cast WeaponInterface pointer is nullptr = return
+	if (WeaponInterfaceObj == nullptr)
+	{
+		return;
+	}
+
+	WeaponInterfaceObj->Execute_Event_RightClickAttack(EquipWeapon, IsPressed);
+}
+
 void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AActor* Item)
 {
 	UE_LOG(LogClass, Warning, TEXT("EventGetItem"));
@@ -501,20 +523,43 @@ void AFHProjectCharacter::DropItemInput(const FInputActionValue& Value)
 
 void AFHProjectCharacter::RightClickInput(const FInputActionValue& Value)
 {
+	//Right Click Input
 	UE_LOG(LogClass, Warning, TEXT("RightClickInput"));
 
+	//Check Character has EquipWeapon
+	if (EquipWeapon == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("nullptr::Character EquipWeapon is null"));
+
+		return;
+	}
+
+	//Server
+	//IsPressed is true
+	Req_RightClickAttack(true);
 }
 
 void AFHProjectCharacter::StopRightClickInput(const FInputActionValue& Value)
 {
+	//Stop Right Click Input
 	UE_LOG(LogClass, Warning, TEXT("StopRightClickInput"));
 
+	//Check Character has EquipWeapon
+	if (EquipWeapon == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("nullptr::Character EquipWeapon is null"));
+
+		return;
+	}
+
+	//Server
+	//IsPressed is false
+	Req_RightClickAttack(false);
 }
 
 void AFHProjectCharacter::LeftClickInput(const FInputActionValue& Value)
 {
 	//Left Click Input
-
 	UE_LOG(LogClass, Warning, TEXT("LeftClickInput"));
 
 	//Check Character has EquipWeapon
@@ -533,7 +578,6 @@ void AFHProjectCharacter::LeftClickInput(const FInputActionValue& Value)
 void AFHProjectCharacter::StopLeftClickInput(const FInputActionValue& Value)
 {
 	//Stop Left Click Input
-
 	UE_LOG(LogClass, Warning, TEXT("StopLeftClickInput"));
 
 	//Check Character has EquipWeapon

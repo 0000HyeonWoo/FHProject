@@ -43,4 +43,8 @@ public:
 	// Event Left Click Attack
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
 	void Event_LeftClickAttack(bool IsPressed);
+
+	// Event Right Click Attack
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
+	void Event_RightClickAttack(bool IsPressed);
 };
