@@ -24,14 +24,14 @@ ABaseWeapon::ABaseWeapon()
 	bReplicates = true;
 	SetReplicateMovement(true);
 
-	//Initialize LeftClickCount
+	//Initialize LeftClickCount, int Type
 	LeftClickCount = 0;
-
-	//Initialize ClickAttackDamage
+	
+	//Initialize ClickAttackDamage, int Type
 	ClickAttackDamage = 0;
 	SetClickAttackDamage(10);
 
-	//Initialize ClickAttackDamage
+	//Initialize ClickAttackDamage, float Type
 	MaxRightClickDamage = 0;
 	SetMaxRightClickDamage(GetClickAttackDamage() * 1.5f);
 
@@ -81,6 +81,8 @@ void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 	// If Actor Destroyed, Character's AttachToComponent function doesn't work
 	//Destroy();
+
+	UE_LOG(LogTemp, Log, TEXT("Character Name :: %s"), *OtherActor->GetName());
 
 }
 
@@ -165,7 +167,7 @@ float ABaseWeapon::GetCalculatedRightClickDamage()
 	RightClickDamage = 0;
 
 	// ** Right Click Damage = Default Damage + ( Default Damage * (Click Count * 0.1f)) **
-	// Default Damage = Left Click Damage
+	// Default Damage = Click Attack Damage
 	// (Click Count * 0.1f) -> 1 = 0.1, 2 = 0.2, 3 = 0.3,,,
 
 	//RightClickDamage increase by LeftClickCount Value
@@ -180,7 +182,6 @@ float ABaseWeapon::GetCalculatedRightClickDamage()
 		RightClickDamage = GetMaxRightClickDamage();
 	}
 	UE_LOG(LogClass, Warning, TEXT("RightClickDamage Changed :: %f"), RightClickDamage);
-
 
 	return RightClickDamage;
 }

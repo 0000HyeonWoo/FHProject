@@ -70,7 +70,7 @@ protected:
 	int ClickAttackDamage;
 
 	//Right Click Damage Limit Value
-	int MaxRightClickDamage;
+	float MaxRightClickDamage;
 
 
 public:
@@ -96,10 +96,10 @@ public:
 
 
 	//Set Max Right Click Damage
-	void SetMaxRightClickDamage(int NewMaxRightClickDamage) { MaxRightClickDamage = NewMaxRightClickDamage; };
+	void SetMaxRightClickDamage(float NewMaxRightClickDamage) { MaxRightClickDamage = NewMaxRightClickDamage; };
 
 	//Return MaxRightClickDamage
-	int GetMaxRightClickDamage() { return MaxRightClickDamage; };
+	float GetMaxRightClickDamage() { return MaxRightClickDamage; };
 
 
 public:
