@@ -186,7 +186,7 @@ public:
 
 // ----------[ Add PROPERTY ]----------
 
-public:
+protected:
 	//EquipWeapon
 	AActor* EquipWeapon;
 

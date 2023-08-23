@@ -84,7 +84,7 @@ AFHProjectCharacter::AFHProjectCharacter()
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
 	//Set Weapon Socket Name
-	//If you want to change Socket Name, Edit "here"
+	//If you want to change Socket Name, Edit like this -> FName(TEXT("MyWeaponSocketName"))
 	WeaponSocketName = FName(TEXT("Weapon"));
 
 }
@@ -322,19 +322,19 @@ void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AA
 			return;
 		}
 
-		// Check EquipWeapon null
-		if (EquipWeapon != nullptr)
-		{
-			UE_LOG(LogClass, Warning, TEXT("nullptr::Character has EquipWeapon"));
-
-			return;
-		}
-
 		// Check Item ( Weapon ) has Owner Character
 		ABaseWeapon* BaseWeaponObj = Cast<ABaseWeapon>(Item);
 		if (BaseWeaponObj->GetOwnerCharacter() != nullptr)
 		{
 			UE_LOG(LogClass, Warning, TEXT("nullptr::Target Item has already has Owner Character"));
+			return;
+		}
+
+		// Check EquipWeapon null
+		if (EquipWeapon != nullptr)
+		{
+			UE_LOG(LogClass, Warning, TEXT("nullptr::Character has EquipWeapon"));
+
 			return;
 		}
 
