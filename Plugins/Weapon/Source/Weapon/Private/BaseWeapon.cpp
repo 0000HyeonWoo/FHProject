@@ -24,6 +24,9 @@ ABaseWeapon::ABaseWeapon()
 	bReplicates = true;
 	SetReplicateMovement(true);
 
+	//Intialize LeftClickCount
+	LeftClickCount = 0;
+
 }
 
 // Called when the game starts or when spawned
@@ -113,7 +116,11 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 	else if (IsPressed == false)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
+
+		LeftClickCount += 1;
+		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 	}
+
 }
 
 void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
@@ -127,6 +134,9 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 	else if (IsPressed == false)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
+
+		LeftClickCount = 0;
+		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 	}
 }
 

@@ -63,6 +63,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	ACharacter* OwnerCharacter;
 
+	//Add Count When Completed Left Click Attack, Reset Count When Right Click Attack
+	int LeftClickCount;
+
 public:
 	//Retrun OwnerCharacter
 	ACharacter* GetOwnerCharacter() { return OwnerCharacter; };
