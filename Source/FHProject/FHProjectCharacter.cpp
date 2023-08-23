@@ -83,6 +83,10 @@ AFHProjectCharacter::AFHProjectCharacter()
 	// Set Character Can Crouch
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
+	//Set Weapon Socket Name
+	//If you want to change Socket Name, Edit "here"
+	WeaponSocketName = FName(TEXT("Weapon"));
+
 }
 
 // Network Setting
@@ -225,7 +229,7 @@ void AFHProjectCharacter::Res_AttachToWeaponSocket_Implementation(AActor* Item)
 	}
 
 	// Item's Event_AttachToComponent, Attach Target Character is Self
-	WeaponInterfaceObj->Execute_Event_AttachToComponent(Item, this);
+	WeaponInterfaceObj->Execute_Event_AttachToComponent(Item, this, WeaponSocketName);
 }
 
 void AFHProjectCharacter::Req_DropItem_Implementation()

@@ -34,7 +34,7 @@ public:
 
 	// Event Attach To Character's WeaponSocket
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
-	void Event_AttachToComponent(ACharacter* TargetCharacter);
+	void Event_AttachToComponent(ACharacter* TargetCharacter, const FName& TargetSocketName);
 
 	// Event Detach From Character's WeaponSocket
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)

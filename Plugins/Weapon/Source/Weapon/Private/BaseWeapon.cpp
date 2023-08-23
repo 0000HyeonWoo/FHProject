@@ -84,7 +84,7 @@ void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 }
 
-void ABaseWeapon::Event_AttachToComponent_Implementation(ACharacter* TargetCharacter)
+void ABaseWeapon::Event_AttachToComponent_Implementation(ACharacter* TargetCharacter, const FName& TargetSocketName)
 {
 	UE_LOG(LogClass, Warning, TEXT("Event_AttachToComponent"));
 
@@ -95,7 +95,7 @@ void ABaseWeapon::Event_AttachToComponent_Implementation(ACharacter* TargetChara
 	StaticMesh->SetSimulatePhysics(false);
 
 	// And Attach to Target Component Name ( FName("weapon") ) on Character Mesh
-	AttachToComponent(TargetCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weapon"));
+	AttachToComponent(TargetCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TargetSocketName);
 
 }
 

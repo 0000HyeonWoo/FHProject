@@ -190,6 +190,9 @@ public:
 	//EquipWeapon
 	AActor* EquipWeapon;
 
+	//Character Mesh's Weapon Socket Name
+	FName WeaponSocketName;
+
 
 public:
 	// Check Any MontagePlaying

@@ -35,9 +35,9 @@ public:
 	//Interface Event
 	//Get Item and Attach Item to Target Character's Socket
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void Event_AttachToComponent(ACharacter* TargetCharacter);
+	void Event_AttachToComponent(ACharacter* TargetCharacter, const FName& TargetSocketName);
 
-	virtual void Event_AttachToComponent_Implementation(ACharacter* TargetCharacter) override;
+	virtual void Event_AttachToComponent_Implementation(ACharacter* TargetCharacter, const FName& TargetSocketName) override;
 
 	//Detach Item From Target Character's Socket
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
