@@ -152,6 +152,15 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Res_DropItem();
 
+
+	//Left Click Attack Action
+	UFUNCTION(Server, Reliable)
+	void Req_LeftClickAttack(bool IsPressed);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Res_LeftClickAttack(bool IsPressed);
+
+
 public:
 	//WeaponInterface Event
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)

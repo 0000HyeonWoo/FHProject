@@ -208,7 +208,7 @@ void AFHProjectCharacter::Res_AttachToWeaponSocket_Implementation(AActor* Item)
 	// EquipWeapon is Target Item
 	EquipWeapon = Item;
 
-	// Test Log
+	// Check EquipWeapon Is Valid
 	if (IsValid(EquipWeapon) == true)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsValid::EquipWeapon"));
@@ -255,6 +255,32 @@ void AFHProjectCharacter::Res_DropItem_Implementation()
 	EquipWeapon = nullptr;
 }
 
+void AFHProjectCharacter::Req_LeftClickAttack_Implementation(bool IsPressed)
+{
+	//Client
+	Res_LeftClickAttack(IsPressed);
+}
+
+void AFHProjectCharacter::Res_LeftClickAttack_Implementation(bool IsPressed)
+{
+	UE_LOG(LogClass, Warning, TEXT("Res_LeftClickAttack"));
+
+	//Check Press LeftClick true
+	if (IsPressed == true)
+	{
+		return;
+	}
+
+	// Cast WeaponInterface - EquipWeapon
+	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(EquipWeapon);
+
+	// Cast WeaponInterface pointer is nullptr = return
+	if (WeaponInterfaceObj == nullptr)
+	{
+		return;
+	}
+}
+
 void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AActor* Item)
 {
 	UE_LOG(LogClass, Warning, TEXT("EventGetItem"));
@@ -280,8 +306,6 @@ void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AA
 
 			return;
 		}
-
-		UE_LOG(LogClass, Warning, TEXT("IsValid::ItemStaticMesh"));
 
 		// Check Item ( Weapon ) has Owner Character
 		ABaseWeapon* BaseWeaponObj = Cast<ABaseWeapon>(Item);
@@ -494,12 +518,34 @@ void AFHProjectCharacter::LeftClickInput(const FInputActionValue& Value)
 {
 	UE_LOG(LogClass, Warning, TEXT("LeftClickInput"));
 
+	//Check Character has EquipWeapon
+	if (EquipWeapon == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("nullptr::Character EquipWeapon is null"));
+
+		return;
+	}
+
+	//Server
+	//IsPressed is true
+	Req_LeftClickAttack(true);
 }
 
 void AFHProjectCharacter::StopLeftClickInput(const FInputActionValue& Value)
 {
 	UE_LOG(LogClass, Warning, TEXT("StopLeftClickInput"));
 
+	//Check Character has EquipWeapon
+	if (EquipWeapon == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("nullptr::Character EquipWeapon is null"));
+
+		return;
+	}
+
+	//Server
+	//IsPressed is false
+	Req_LeftClickAttack(false);
 }
 
 

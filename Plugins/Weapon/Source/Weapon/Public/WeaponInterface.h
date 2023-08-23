@@ -32,8 +32,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
 	void Event_GetItem(EItemType WeaponType, AActor* Item);
 
-	//void EventGetItem(EItemType WeaponType, UStaticMeshComponent* StaticMesh);
-
 	// Event Attach To Character's WeaponSocket
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
 	void Event_AttachToComponent(ACharacter* TargetCharacter);
