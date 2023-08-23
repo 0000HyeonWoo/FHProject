@@ -66,9 +66,38 @@ protected:
 	//Add Count When Completed Left Click Attack, Reset Count When Right Click Attack
 	int LeftClickCount;
 
+	//Damage Value
+	int ClickAttackDamage;
+
+	//Right Click Damage Limit Value
+	int MaxRightClickDamage;
+
+
 public:
-	//Retrun OwnerCharacter
+	//Return OwnerCharacter
 	ACharacter* GetOwnerCharacter() { return OwnerCharacter; };
+
+
+	//Return LeftClickCount
+	int GetLeftClickCount() { return LeftClickCount; };
+
+	//Initialize LeftClickCount
+	void InitializeLeftClickCount() { LeftClickCount = 0; };
+
+
+	//Get Click Attack Damage
+	int GetClickAttackDamage() { return ClickAttackDamage; };
+	
+	//Set Click Attack Damage
+	void SetClickAttackDamage(int NewClickAttackDamage) { ClickAttackDamage = NewClickAttackDamage; };
+
+
+	//Set Max Right Click Damage
+	void SetMaxRightClickDamage(int NewMaxRightClickDamage) { MaxRightClickDamage = NewMaxRightClickDamage; };
+
+	//Return MaxRightClickDamage
+	int GetMaxRightClickDamage() { return MaxRightClickDamage; };
+
 
 public:
 	//BaseWeapon has StaticMesh

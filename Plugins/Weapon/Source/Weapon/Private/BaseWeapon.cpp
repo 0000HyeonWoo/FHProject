@@ -24,8 +24,16 @@ ABaseWeapon::ABaseWeapon()
 	bReplicates = true;
 	SetReplicateMovement(true);
 
-	//Intialize LeftClickCount
+	//Initialize LeftClickCount
 	LeftClickCount = 0;
+
+	//Initialize ClickAttackDamage
+	ClickAttackDamage = 0;
+	SetClickAttackDamage(10);
+
+	//Initialize ClickAttackDamage
+	MaxRightClickDamage = 0;
+	SetMaxRightClickDamage(GetClickAttackDamage() * 1.5f);
 
 }
 
@@ -107,6 +115,7 @@ void ABaseWeapon::Event_DetachFromActor_Implementation(ACharacter* TargetCharact
 
 void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 {
+	//Character Left Click Event Active this function
 	UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack"));
 
 	if (IsPressed == true)
@@ -125,6 +134,7 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 
 void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 {
+	//Character Right Click Event Active this function
 	UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack"));
 
 	if (IsPressed == true)
@@ -135,7 +145,22 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
 
-		LeftClickCount = 0;
+		float RightClickDamage;
+		RightClickDamage = 0;
+		UE_LOG(LogClass, Warning, TEXT("Calculate Damage :: %d"), GetLeftClickCount() * 0.1f);
+
+		RightClickDamage = GetClickAttackDamage() + (GetClickAttackDamage() * (GetLeftClickCount() * 0.1f));
+		UE_LOG(LogClass, Warning, TEXT("RightClickDamage :: %f"), RightClickDamage);
+
+		if (RightClickDamage > GetMaxRightClickDamage())
+		{
+			RightClickDamage = GetMaxRightClickDamage();
+		}
+
+		UE_LOG(LogClass, Warning, TEXT("RightClickDamage Changed :: %f"), RightClickDamage);
+
+
+		InitializeLeftClickCount();
 		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 	}
 }
