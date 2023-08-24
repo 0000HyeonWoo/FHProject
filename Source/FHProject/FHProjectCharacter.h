@@ -199,6 +199,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool bIsMontagePlaying() { return GetMesh()->GetAnimInstance()->IsAnyMontagePlaying(); };
 
+	//Return Character's EquipWeapon
+	AActor* GetEquipWeapon() { return EquipWeapon; };
+
 public:
 	// Use When Replicate Move Server and Client
 	UPROPERTY(Replicated)

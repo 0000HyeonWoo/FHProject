@@ -85,7 +85,7 @@ AFHProjectCharacter::AFHProjectCharacter()
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
 	//Set Weapon Socket Name
-	//If you want to change Socket Name, Edit like this -> FName(TEXT("MyWeaponSocketName"))
+	//If you want to change Socket Name, Edit like this -> FName(TEXT("MySocketName"))
 	WeaponSocketName = FName(TEXT("Weapon"));
 
 }

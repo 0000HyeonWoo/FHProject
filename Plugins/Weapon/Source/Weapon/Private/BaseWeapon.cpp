@@ -36,6 +36,12 @@ ABaseWeapon::ABaseWeapon()
 	MaxRightClickDamage = 0;
 	SetMaxRightClickDamage(GetClickAttackDamage() * 1.5f);
 
+	//Set Attack Socket Name
+	//If you want to change Socket Name, Edit like this -> FName(TEXT("MySocketName"))
+	AttackStartSocketName = FName(TEXT("Attack_Start"));
+	AttackEndSocketName = FName(TEXT("Attack_End"));
+
+
 }
 
 // Called when the game starts or when spawned
@@ -84,8 +90,20 @@ void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	// If Actor Destroyed, Character's AttachToComponent function doesn't work
 	//Destroy();
 
-	UE_LOG(LogTemp, Log, TEXT("Character Name :: %s"), *OtherActor->GetName());
+	UE_LOG(LogClass, Warning, TEXT("Character Name :: %s"), *OtherActor->GetName());
 
+}
+
+void ABaseWeapon::Event_Test_Implementation()
+{
+	//Server
+	Req_TestFunction();
+}
+
+void ABaseWeapon::Req_TestFunction_Implementation()
+{
+	//Test Function
+	UE_LOG(LogClass, Warning, TEXT("Event_Test"));
 }
 
 void ABaseWeapon::Event_AttachToComponent_Implementation(ACharacter* TargetCharacter, const FName& TargetSocketName)

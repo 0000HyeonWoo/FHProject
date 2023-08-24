@@ -28,15 +28,19 @@ class WEAPON_API IWeaponInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	// Event for Test
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
+	void Event_Test();
+
 	// Event Character Get Item
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
 	void Event_GetItem(EItemType WeaponType, AActor* Item);
 
-	// Event Attach To Character's WeaponSocket
+	// Event Attach To Character's TargetSocketName
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
 	void Event_AttachToComponent(ACharacter* TargetCharacter, const FName& TargetSocketName);
 
-	// Event Detach From Character's WeaponSocket
+	// Event Detach From Character's TargetSocketName
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
 	void Event_DetachFromActor(ACharacter* TargetCharacter);
 

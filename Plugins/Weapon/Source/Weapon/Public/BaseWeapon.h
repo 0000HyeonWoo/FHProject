@@ -33,6 +33,15 @@ public:
 
 public:
 	//Interface Event
+	//Test Function
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Event_Test();
+
+	virtual void Event_Test_Implementation() override;
+
+	UFUNCTION(Server, Reliable)
+	void Req_TestFunction();
+
 	//Get Item and Attach Item to Target Character's Socket
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Event_AttachToComponent(ACharacter* TargetCharacter, const FName& TargetSocketName);
@@ -71,6 +80,10 @@ protected:
 
 	//Right Click Damage Limit Value
 	float MaxRightClickDamage;
+
+	//Use When Attack Trace Function
+	FName AttackStartSocketName;
+	FName AttackEndSocketName;
 
 
 public:
