@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "BaseWeapon.h"
+#include "WeaponInterface.h"
 
 
 //////////////////////////////////////////////////////////////////////////

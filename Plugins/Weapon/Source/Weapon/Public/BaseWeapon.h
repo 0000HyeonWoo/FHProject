@@ -107,7 +107,10 @@ public:
 	float GetCalculatedRightClickDamage();
 
 	//Play AnimMontage, Target is Weapon's OwnerCharacter
-	void PlayAttackAnimMontage();
+	void PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage);
+
+
+	void ApplyDamageToTargetActor();
 
 
 public:
@@ -119,7 +122,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 	EItemType eWeaponType;
 
-	// Use When Attack
+	// Use When Attack - Left Click
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* AttackMontage;
+
+	// Use When Special Attack - Right Click
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* SpecialAttackMontage;
 };

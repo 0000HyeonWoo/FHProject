@@ -3,6 +3,7 @@
 
 #include "BaseWeapon.h"
 #include "WeaponInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
 
 
@@ -124,14 +125,36 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 	if (IsPressed == true)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsPressed true"));
+
+		//Check Weapon has OwnerCharacter
+		if (OwnerCharacter == nullptr)
+		{
+			UE_LOG(LogClass, Warning, TEXT("OwnerCharacter::nullptr"));
+			return;
+		}
+
+		//Check Any Montage Playing
+		if (OwnerCharacter->GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() == true)
+		{
+			UE_LOG(LogClass, Warning, TEXT("IsAnyMontagePlaying::true"));
+			return;
+		}
+
+		// If AttackMontage Is Not Valid = return
+		if (IsValid(AttackMontage) == false)
+		{
+			UE_LOG(LogClass, Warning, TEXT("IsValid::AttackMontage, false"));
+			return;
+		}
+
+		AddLeftClickCount();
+		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
+
+		PlayAttackAnimMontage(AttackMontage);
 	}
 	else if (IsPressed == false)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
-
-		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
-
-		PlayAttackAnimMontage();
 	}
 
 }
@@ -144,18 +167,42 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 	if (IsPressed == true)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsPressed true"));
-	}
-	else if (IsPressed == false)
-	{
-		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
+
+		//Check Weapon has OwnerCharacter
+		if (OwnerCharacter == nullptr)
+		{
+			UE_LOG(LogClass, Warning, TEXT("OwnerCharacter::nullptr"));
+			return;
+		}
+
+		//Check Any Montage Playing
+		if (OwnerCharacter->GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() == true)
+		{
+			UE_LOG(LogClass, Warning, TEXT("IsAnyMontagePlaying::true"));
+			return;
+		}
+
+		// If SpecialAttackMontage Is Not Valid = return
+		if (IsValid(SpecialAttackMontage) == false)
+		{
+			UE_LOG(LogClass, Warning, TEXT("IsValid::SpecialAttackMontage, false"));
+			return;
+		}
 
 		float RightClickDamage;
 		RightClickDamage = GetCalculatedRightClickDamage();
 		UE_LOG(LogClass, Warning, TEXT("CalculatedRightClickDamage :: %d"), RightClickDamage);
 
+		PlayAttackAnimMontage(SpecialAttackMontage);
+
 		//After Calculate Damage, Initialize LeftClickCount 0;
 		InitializeLeftClickCount();
 		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
+
+	}
+	else if (IsPressed == false)
+	{
+		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
 	}
 }
 
@@ -180,7 +227,7 @@ float ABaseWeapon::GetCalculatedRightClickDamage()
 	if (RightClickDamage > GetMaxRightClickDamage())
 	{
 		UE_LOG(LogClass, Warning, TEXT("RightClickDamage > GetMaxRightClickDamage"));
-		UE_LOG(LogClass, Warning, TEXT("RightClickDamage Changed :: %f"), RightClickDamage);
+		UE_LOG(LogClass, Warning, TEXT("RightClickDamage Value Before Change:: %f"), RightClickDamage);
 		//If Calculated Value bigger than Max Value, Set Calculated Value to Max Value
 		RightClickDamage = GetMaxRightClickDamage();
 	}
@@ -190,32 +237,37 @@ float ABaseWeapon::GetCalculatedRightClickDamage()
 	return RightClickDamage;
 }
 
-void ABaseWeapon::PlayAttackAnimMontage()
+void ABaseWeapon::PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage)
 {
 	UE_LOG(LogClass, Warning, TEXT("PlayAttackAnimMontage"));
 	//Play Attack AnimMontage
 
-	//Check Weapon has OwnerCharacter
-	if (OwnerCharacter == nullptr)
-	{
-		UE_LOG(LogClass, Warning, TEXT("OwnerCharacter::nullptr"));
-		return;
-	}
+	OwnerCharacter->PlayAnimMontage(TargetAttackMontage);
+}
 
-	//Check Any Montage Playing
-	if (OwnerCharacter->GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() == true)
-	{
-		UE_LOG(LogClass, Warning, TEXT("IsAnyMontagePlaying::true"));
-		return;
-	}
+void ABaseWeapon::ApplyDamageToTargetActor()
+{
+	FHitResult AttackHitResult;
+	FCollisionObjectQueryParams QueryParams;
+	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
+	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Vehicle);
+	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Destructible);
 
-	// If AttackMontage Is Not Valid = return
-	if (IsValid(AttackMontage) == false)
-	{
-		UE_LOG(LogClass, Warning, TEXT("IsValid::AttackMontage, false"));
-		return;
-	}
+	FCollisionQueryParams QueryParamsIgnoredActor;
+	QueryParamsIgnoredActor.AddIgnoredActor(OwnerCharacter);
 
-	AddLeftClickCount();
-	OwnerCharacter->PlayAnimMontage(AttackMontage);
+	//bool isHit = GetWorld()->LineTraceSingleByObjectType(AttackHitResult, vStart, vEnd, collisionObjectQuery, collisionQuery);
+	//DrawDebugLine(GetWorld(), vStart, vEnd, FColor::Yellow, false, 5.0f);
+
+	//if (isHit == false)
+		//return;
+
+	ACharacter* HitChar = Cast<ACharacter>(AttackHitResult.GetActor());
+	if (HitChar == nullptr)
+		return;
+
+	//UGameplayStatics::ApplyDamage(HitChar, weaponData->Damage, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
 }
