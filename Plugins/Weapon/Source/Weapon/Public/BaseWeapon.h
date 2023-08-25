@@ -81,10 +81,6 @@ protected:
 	//Right Click Damage Limit Value
 	float MaxRightClickDamage;
 
-	//Use When Attack Trace Function
-	FName AttackStartSocketName;
-	FName AttackEndSocketName;
-
 
 public:
 	//Return OwnerCharacter

@@ -36,10 +36,6 @@ ABaseWeapon::ABaseWeapon()
 	MaxRightClickDamage = 0;
 	SetMaxRightClickDamage(GetClickAttackDamage() * 1.5f);
 
-	//Set Attack Socket Name
-	//If you want to change Socket Name, Edit like this -> FName(TEXT("MySocketName"))
-	AttackStartSocketName = FName(TEXT("Attack_Start"));
-	AttackEndSocketName = FName(TEXT("Attack_End"));
 
 
 }
