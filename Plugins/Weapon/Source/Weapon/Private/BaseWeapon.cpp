@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/Actor.h"
 #include "Components/SceneComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 
@@ -233,7 +234,7 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack"));
 	//Click Event
 
-	//Set Start, End Point Vector by Socket Location, Target is Weapon Mesh's Socket
+	//Set Start, End Point Location Vector by Socket Location, Target is Weapon Mesh's Socket
 	FVector AttackStartLocation;
 	AttackStartLocation = StaticMesh->GetSocketLocation(AttackStartSocketName);
 
@@ -335,6 +336,37 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVe
 
 	//Trace by Location Value, Collision
 	bool bIsHit = GetWorld()->LineTraceSingleByObjectType(AttackHitResult, Start, End, QueryParams, QueryParamsIgnoredActor);
+
+	TArray<AActor*> IgnoreActors;
+	IgnoreActors.Add(OwnerCharacter);
+	IgnoreActors.Add(this);
+
+	float SphereRadius;
+	SphereRadius = 32.f;
+
+	bool bTraceComplex;
+	bTraceComplex = false;
+
+	bool bIgnoreSelf;
+	bIgnoreSelf = true;
+
+	UKismetSystemLibrary::SphereTraceSingle
+	(
+		GetWorld(),
+		Start,
+		End,
+		SphereRadius,
+		UEngineTypes::ConvertToTraceType(ECC_Visibility),
+		bTraceComplex,
+		IgnoreActors,
+		EDrawDebugTrace::ForDuration,
+		AttackHitResult,
+		bIgnoreSelf,
+		FColor::Red,
+		FColor::Green,
+		5.f
+	);
+
 
 	//DrawDebugLine for Check LineTrace Function is Working
 	DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 5.0f);
