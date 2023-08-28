@@ -126,7 +126,11 @@ void AFHProjectCharacter::Tick(float DeltaTime)
 
 float AFHProjectCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	UE_LOG(LogClass, Warning, TEXT("TakeDamage"));
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamage function Test :: TakeDamage"));
+
+	UE_LOG(LogClass, Warning, TEXT("EventInstigator :: %s"), *FString(EventInstigator->GetName()));
+
+	UE_LOG(LogClass, Warning, TEXT("DamageAmount :: %f"), DamageAmount);
 
 	return 0.0f;
 }

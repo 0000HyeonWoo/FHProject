@@ -167,10 +167,13 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 			return;
 		}
 
+		//Add Left Click Count
 		AddLeftClickCount();
 		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 
 		PlayAttackAnimMontage(AttackMontage);
+
+		//Left Click is true
 		bIsLeftClick = true;
 	}
 	else if (IsPressed == false)
@@ -210,11 +213,13 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 			return;
 		}
 
-		float RightClickDamage;
-		RightClickDamage = GetCalculatedRightClickDamage();
-		UE_LOG(LogClass, Warning, TEXT("CalculatedRightClickDamage :: %d"), RightClickDamage);
+		//float RightClickDamage;
+		//RightClickDamage = GetCalculatedRightClickDamage();
+		//UE_LOG(LogClass, Warning, TEXT("CalculatedRightClickDamage :: %d"), RightClickDamage);
 
 		PlayAttackAnimMontage(SpecialAttackMontage);
+
+		//Left Click is flase
 		bIsLeftClick = false;
 	}
 	else if (IsPressed == false)
@@ -228,6 +233,7 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack"));
 	//Click Event
 
+	//Set Start, End Point Vector by Socket Location, Target is Weapon Mesh's Socket
 	FVector AttackStartLocation;
 	AttackStartLocation = StaticMesh->GetSocketLocation(AttackStartSocketName);
 
@@ -235,24 +241,30 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	AttackEndLocation = StaticMesh->GetSocketLocation(AttackEndSocketName);
 	
 
+	//Check Has Authority, UNetDriver Error Come from here
 	if (HasAuthority() == false)
 	{
 		UE_LOG(LogClass, Warning, TEXT("HasAuthority == false"));
-
 		return;
 	}
 
+	//Active Event by Left Click Value
+	//Use Start, End Location is Same, Difference is only Damage
 	if (GetIsLeftClick() == true)
 	{
 		UE_LOG(LogClass, Warning, TEXT("GetIsLeftClick == true"));
+
+		//Left Click Damage Event Use Default Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetClickAttackDamage());
 	}
 	else
 	{
 		UE_LOG(LogClass, Warning, TEXT("GetIsLeftClick == false"));
+
+		//Right Click Damage Event Use Calculated Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
 
-		//After Calculate Damage, Initialize LeftClickCount 0;
+		//After Active Right Click Event, Initialize LeftClickCount 0;
 		InitializeLeftClickCount();
 		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 
@@ -301,8 +313,11 @@ void ABaseWeapon::PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage)
 void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVector End, float Damage)
 {
 	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor"));
+
+	//Check Damage Value
 	UE_LOG(LogClass, Warning, TEXT("Apply Damage :: %f"), Damage);
 
+	//Set Collision for Trace Function
 	FHitResult AttackHitResult;
 	FCollisionObjectQueryParams QueryParams;
 	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
@@ -312,32 +327,42 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVe
 	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Vehicle);
 	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Destructible);
 
+	//Add Ignore Actor
 	FCollisionQueryParams QueryParamsIgnoredActor;
 	QueryParamsIgnoredActor.AddIgnoredActor(OwnerCharacter);
 	QueryParamsIgnoredActor.AddIgnoredActor(this);
 
 
+	//Trace by Location Value, Collision
 	bool bIsHit = GetWorld()->LineTraceSingleByObjectType(AttackHitResult, Start, End, QueryParams, QueryParamsIgnoredActor);
+
+	//DrawDebugLine for Check LineTrace Function is Working
 	DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 5.0f);
 
+	//If Trace can't hit Anything, return
 	if (bIsHit == false)
 	{
 		UE_LOG(LogClass, Warning, TEXT("bIsHit == false"));
 		return;
 	}
 	
-
+	//Get Hit Actor
 	AActor* HitTargetObj = Cast<AActor>(AttackHitResult.GetActor());
 
+	//Check Hit Actor nullptr
 	if (HitTargetObj == nullptr)
 	{
 		UE_LOG(LogClass, Warning, TEXT("HitTargetObj == nullptr"));
 		return;
 	}
-
+	
+	//Check Hit Actor's Name
 	UE_LOG(LogClass, Warning, TEXT("Hit Actor :: %s"), *FString(HitTargetObj->GetName()));
 
+	//Apply Damage to Hit Actor, This function Active Target's TakeDamage
 	UGameplayStatics::ApplyDamage(HitTargetObj, Damage, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
-	UE_LOG(LogClass, Warning, TEXT("ApplyDamage End"));
+
+	//Check ApplyDamage End
+	//UE_LOG(LogClass, Warning, TEXT("ApplyDamage End"));
 
 }

@@ -9,6 +9,8 @@
 
 UApplyDamageAnimNotifyState::UApplyDamageAnimNotifyState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	//Do not Active Notify State in UE Editor(In Animation Montage Window)
+	//If Do not this, UE Editor Maybe crashed
 	bShouldFireInEditor = false;
 }
 
@@ -17,15 +19,20 @@ void UApplyDamageAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 	UE_LOG(LogClass, Warning, TEXT("NotifyBegin"));
 
+	//Get Mesh's Owner
 	AFHProjectCharacter* FHProjectCharacterObj = Cast<AFHProjectCharacter>(MeshComp->GetOwner());
+
+	//Check Character is nullptr
 	if (FHProjectCharacterObj == nullptr)
 	{
 		UE_LOG(LogClass, Warning, TEXT("nullptr:FHProjectCharacterObj, true"));
 		return;
 	}
 	
+	//EquipWeapon is Character's Weapon
 	EquipWeapon = FHProjectCharacterObj->GetEquipWeapon();
 
+	//Check Weapon
 	BaseWeaponObj = Cast<ABaseWeapon>(EquipWeapon);
 	if (BaseWeaponObj == nullptr)
 	{
@@ -41,6 +48,7 @@ void UApplyDamageAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, U
 
 	UE_LOG(LogClass, Warning, TEXT("NotifyTick"));
 
+	//Active Event
 	BaseWeaponObj->Execute_Event_ClickAttack(EquipWeapon);
 }
 
