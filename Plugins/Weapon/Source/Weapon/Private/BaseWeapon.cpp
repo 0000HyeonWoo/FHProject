@@ -43,8 +43,7 @@ ABaseWeapon::ABaseWeapon()
 	//Set Weapon Attack Type
 	bIsRangeWeapon = true;
 
-	//Vector x, y, z
-	AttackRange = { 1000.f, 0.f, 0.f };
+	AttackRange = 1000.f;
 
 	//Set Attack Socket Name
 	//If you want to change Socket Name, Edit like this -> FName(TEXT("MySocketName"))
@@ -255,7 +254,9 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsRangeWeapon, true"));
 
-		AttackEndLocation = AttackStartLocation + AttackRange;
+		//Range Weapon
+		//Set Attack Range(Attack End Location) by Add Value(Vector Value, Use X Value Only)
+		AttackEndLocation = AttackStartLocation + (OwnerCharacter->GetActorForwardVector() * AttackRange);
 	}
 	else
 	{
@@ -320,7 +321,8 @@ float ABaseWeapon::GetCalculatedRightClickDamage()
 		//If Calculated Value bigger than Max Value, Set Calculated Value to Max Value
 		RightClickDamage = GetMaxRightClickDamage();
 	}
-
+	
+	//Check Calculated Value
 	UE_LOG(LogClass, Warning, TEXT("RightClickDamage :: %f"), RightClickDamage);
 
 	return RightClickDamage;
@@ -341,6 +343,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVe
 	//Check Damage Value
 	UE_LOG(LogClass, Warning, TEXT("Apply Damage :: %f"), Damage);
 
+	//Trace Result Value
 	bool bIsHit;
 	bIsHit = true;
 
@@ -354,6 +357,8 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVe
 	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Vehicle);
 	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Destructible);
 
+	//Start Trace by Weapon Type
+	//Range Weapon is LineTrace, else Weapon SphereTrace
 	if (bIsRangeWeapon == true)
 	{
 		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon == true"));

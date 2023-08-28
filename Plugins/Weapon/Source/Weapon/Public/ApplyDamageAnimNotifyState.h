@@ -27,6 +27,7 @@ public:
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
 protected:
+	//Set Pointer Value When Notify Begin
 	AActor* EquipWeapon;
 	ABaseWeapon* BaseWeaponObj;
 };

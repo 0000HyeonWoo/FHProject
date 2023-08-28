@@ -130,6 +130,7 @@ float AFHProjectCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
 
 	UE_LOG(LogClass, Warning, TEXT("EventInstigator :: %s"), *FString(EventInstigator->GetName()));
 
+	//Check Damage Value
 	UE_LOG(LogClass, Warning, TEXT("DamageAmount :: %f"), DamageAmount);
 
 	return 0.0f;

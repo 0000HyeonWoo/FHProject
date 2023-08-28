@@ -104,7 +104,7 @@ protected:
 
 	//Use This Value Only Range Attack
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector AttackRange;
+	float AttackRange;
 
 
 public:
