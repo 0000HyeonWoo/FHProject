@@ -2,16 +2,13 @@
 
 
 #include "ApplyDamageAnimNotifyState.h"
-#include "Engine/SkeletalMeshSocket.h"
-#include "Math/Vector.h"
-#include "Math/TransformNonVectorized.h"
+
 #include "DrawDebugHelpers.h"
-#include "GameFramework/Character.h"
 
 
-UApplyDamageAnimNotifyState::UApplyDamageAnimNotifyState()
+UApplyDamageAnimNotifyState::UApplyDamageAnimNotifyState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	
+	bShouldFireInEditor = false;
 }
 
 void UApplyDamageAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
@@ -23,6 +20,11 @@ void UApplyDamageAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	//If you want to change Socket Name, Edit like this -> FName(TEXT("MySocketName"))
 	AttackStartSocketName = FName(TEXT("Attack_Start"));
 	AttackEndSocketName = FName(TEXT("Attack_End"));
+
+	
+	TestL = MeshComp->GetSocketLocation(AttackStartSocketName);
+	TestL2 = MeshComp->GetSocketLocation(AttackEndSocketName);
+
 }
 
 void UApplyDamageAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
@@ -31,36 +33,10 @@ void UApplyDamageAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, U
 
 	UE_LOG(LogClass, Warning, TEXT("NotifyTick"));
 
-	const USkeletalMeshSocket* AttackStart = MeshComp->GetSocketByName(AttackStartSocketName);
-	if (IsValid(AttackStart) == false)
-	{
-		UE_LOG(LogClass, Warning, TEXT("IsValid::AttackStart, false"));
-		return;
-	}
-
-	const USkeletalMeshSocket* AttackEnd = MeshComp->GetSocketByName(AttackEndSocketName);
-	if (IsValid(AttackStart) == false)
-	{
-		UE_LOG(LogClass, Warning, TEXT("IsValid::AttackEnd, false"));
-		return;
-	}
-
-
-	FVector TestL;
-	FVector TestL2;
-
-	FTransform TestT;
-	FTransform TestT2;
-
-	TestT = AttackStart->GetSocketLocalTransform();
-	TestT2 = AttackEnd->GetSocketLocalTransform();
-
-	TestL = TestT.GetLocation();
-	TestL2 = TestT2.GetLocation();
 
 	DrawDebugLine
 	(
-		GetWorld(),
+		MeshComp->GetOwner()->GetWorld(),
 		TestL,
 		TestL2,
 		FColor::Yellow, false, 5.0f

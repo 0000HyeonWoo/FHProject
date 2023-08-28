@@ -14,10 +14,9 @@ class WEAPON_API UApplyDamageAnimNotifyState : public UAnimNotifyState
 {
 	GENERATED_BODY()
 	
-public:
-	UApplyDamageAnimNotifyState();
 
 public:
+	UApplyDamageAnimNotifyState(const FObjectInitializer& ObjectInitializer);
 
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 
@@ -30,5 +29,8 @@ protected:
 	//Use When Attack Trace Function
 	FName AttackStartSocketName;
 	FName AttackEndSocketName;
+
+	FVector TestL;
+	FVector TestL2;
 
 };
