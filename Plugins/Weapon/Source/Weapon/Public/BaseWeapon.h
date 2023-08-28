@@ -92,7 +92,18 @@ protected:
 	FName AttackStartSocketName;
 	FName AttackEndSocketName;
 
+	//Set When Click Event Acive
 	bool bIsLeftClick;
+
+	//Use When SphereTrace Function
+	float SphereRadius;
+
+	//Check Weapon Attack Type
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsRangeWeapon;
+
+	//Use This Value Only Range Attack
+	FVector AttackRange;
 
 
 public:

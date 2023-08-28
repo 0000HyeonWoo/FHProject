@@ -40,10 +40,20 @@ ABaseWeapon::ABaseWeapon()
 	MaxRightClickDamage = 0;
 	SetMaxRightClickDamage(GetClickAttackDamage() * 1.5f);
 
+	//Set Weapon Attack Type
+	bIsRangeWeapon = true;
+
+	//Vector x, y, z
+	AttackRange = { 1000.f, 0.f, 0.f };
+
 	//Set Attack Socket Name
 	//If you want to change Socket Name, Edit like this -> FName(TEXT("MySocketName"))
 	AttackStartSocketName = FName(TEXT("Attack_Start"));
 	AttackEndSocketName = FName(TEXT("Attack_End"));
+
+	//Set Sphere Radiut for Trace
+	//Set Value by Weapon's StaticMesh Attack Parts
+	SphereRadius = 32.f;
 
 }
 
@@ -239,7 +249,20 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	AttackStartLocation = StaticMesh->GetSocketLocation(AttackStartSocketName);
 
 	FVector AttackEndLocation;
-	AttackEndLocation = StaticMesh->GetSocketLocation(AttackEndSocketName);
+
+	//Set Value by Weapon Attack Type
+	if (bIsRangeWeapon == true)
+	{
+		UE_LOG(LogClass, Warning, TEXT("IsRangeWeapon, true"));
+
+		AttackEndLocation = AttackStartLocation + AttackRange;
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("IsRangeWeapon, false"));
+
+		AttackEndLocation = StaticMesh->GetSocketLocation(AttackEndSocketName);
+	}
 	
 
 	//Check Has Authority, UNetDriver Error Come from here
@@ -318,6 +341,9 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVe
 	//Check Damage Value
 	UE_LOG(LogClass, Warning, TEXT("Apply Damage :: %f"), Damage);
 
+	bool bIsHit;
+	bIsHit = true;
+
 	//Set Collision for Trace Function
 	FHitResult AttackHitResult;
 	FCollisionObjectQueryParams QueryParams;
@@ -328,56 +354,64 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVe
 	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Vehicle);
 	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Destructible);
 
-	//Add Ignore Actor
-	FCollisionQueryParams QueryParamsIgnoredActor;
-	QueryParamsIgnoredActor.AddIgnoredActor(OwnerCharacter);
-	QueryParamsIgnoredActor.AddIgnoredActor(this);
+	if (bIsRangeWeapon == true)
+	{
+		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon == true"));
 
+		//Add Ignore Actor
+		FCollisionQueryParams QueryParamsIgnoredActor;
+		QueryParamsIgnoredActor.AddIgnoredActor(OwnerCharacter);
+		QueryParamsIgnoredActor.AddIgnoredActor(this);
 
-	//Trace by Location Value, Collision
-	bool bIsHit = GetWorld()->LineTraceSingleByObjectType(AttackHitResult, Start, End, QueryParams, QueryParamsIgnoredActor);
+		//Trace by Location Value, Collision
+		bIsHit = GetWorld()->LineTraceSingleByObjectType(AttackHitResult, Start, End, QueryParams, QueryParamsIgnoredActor);
 
-	TArray<AActor*> IgnoreActors;
-	IgnoreActors.Add(OwnerCharacter);
-	IgnoreActors.Add(this);
+		//DrawDebugLine for Check LineTrace Function is Working
+		DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 5.0f);
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon == false"));
 
-	float SphereRadius;
-	SphereRadius = 32.f;
+		//Add Ignore Actor
+		TArray<AActor*> IgnoreActors;
+		//----------[ Check Ignore Character Here ]----------
+		//IgnoreActors.Add(OwnerCharacter);
+		IgnoreActors.Add(this);
 
-	bool bTraceComplex;
-	bTraceComplex = false;
+		bool bTraceComplex;
+		bTraceComplex = false;
 
-	bool bIgnoreSelf;
-	bIgnoreSelf = true;
+		bool bIgnoreSelf;
+		bIgnoreSelf = true;
 
-	UKismetSystemLibrary::SphereTraceSingle
-	(
-		GetWorld(),
-		Start,
-		End,
-		SphereRadius,
-		UEngineTypes::ConvertToTraceType(ECC_Visibility),
-		bTraceComplex,
-		IgnoreActors,
-		EDrawDebugTrace::ForDuration,
-		AttackHitResult,
-		bIgnoreSelf,
-		FColor::Red,
-		FColor::Green,
-		5.f
-	);
+		//Start SphereTrace
+		bIsHit = UKismetSystemLibrary::SphereTraceSingle
+		(
+			GetWorld(),
+			Start,
+			End,
+			SphereRadius,
+			UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_OverlapAll_Deprecated),
+			bTraceComplex,
+			IgnoreActors,
+			EDrawDebugTrace::ForDuration,
+			AttackHitResult,
+			bIgnoreSelf,
+			FColor::Red,
+			FColor::Green,
+			5.f
+		);
 
+	}
 
-	//DrawDebugLine for Check LineTrace Function is Working
-	DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 5.0f);
-
-	//If Trace can't hit Anything, return
+	//If Trace(Attack) can't hit Anything, return
 	if (bIsHit == false)
 	{
 		UE_LOG(LogClass, Warning, TEXT("bIsHit == false"));
 		return;
 	}
-	
+
 	//Get Hit Actor
 	AActor* HitTargetObj = Cast<AActor>(AttackHitResult.GetActor());
 
