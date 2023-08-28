@@ -51,4 +51,8 @@ public:
 	// Event Right Click Attack
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
 	void Event_RightClickAttack(bool IsPressed);
+
+	// Event Click Attack
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Event)
+	void Event_ClickAttack();
 };

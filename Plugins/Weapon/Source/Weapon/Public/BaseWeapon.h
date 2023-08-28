@@ -42,6 +42,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Req_TestFunction();
 
+
 	//Get Item and Attach Item to Target Character's Socket
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Event_AttachToComponent(ACharacter* TargetCharacter, const FName& TargetSocketName);
@@ -66,6 +67,12 @@ public:
 
 	virtual void Event_RightClickAttack_Implementation(bool IsPressed) override;
 
+	// Event Click Attack
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Event_ClickAttack();
+
+	virtual void Event_ClickAttack_Implementation() override;
+
 
 protected:
 	//Owner Character
@@ -80,6 +87,12 @@ protected:
 
 	//Right Click Damage Limit Value
 	float MaxRightClickDamage;
+
+	//Attack Point Socket Name
+	FName AttackStartSocketName;
+	FName AttackEndSocketName;
+
+	bool bIsLeftClick;
 
 
 public:
@@ -110,6 +123,8 @@ public:
 	//Return MaxRightClickDamage
 	float GetMaxRightClickDamage() { return MaxRightClickDamage; };
 
+	bool GetIsLeftClick() { return bIsLeftClick; };
+
 
 public:
 	//Return Calculated Right Click Damage
@@ -119,7 +134,8 @@ public:
 	void PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage);
 
 
-	void ApplyDamageToTargetActor();
+	UFUNCTION(Server, Reliable)
+	void Req_ApplyDamageToTargetActor();
 
 
 public:

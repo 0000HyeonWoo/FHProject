@@ -2,8 +2,9 @@
 
 
 #include "ApplyDamageAnimNotifyState.h"
-
 #include "DrawDebugHelpers.h"
+#include "FHProjectCharacter.h"
+#include "BaseWeapon.h"
 
 
 UApplyDamageAnimNotifyState::UApplyDamageAnimNotifyState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -16,14 +17,21 @@ void UApplyDamageAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 	UE_LOG(LogClass, Warning, TEXT("NotifyBegin"));
 
-	//Set Attack Socket Name
-	//If you want to change Socket Name, Edit like this -> FName(TEXT("MySocketName"))
-	AttackStartSocketName = FName(TEXT("Attack_Start"));
-	AttackEndSocketName = FName(TEXT("Attack_End"));
-
+	AFHProjectCharacter* FHProjectCharacterObj = Cast<AFHProjectCharacter>(MeshComp->GetOwner());
+	if (FHProjectCharacterObj == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("nullptr:FHProjectCharacterObj, true"));
+		return;
+	}
 	
-	TestL = MeshComp->GetSocketLocation(AttackStartSocketName);
-	TestL2 = MeshComp->GetSocketLocation(AttackEndSocketName);
+	EquipWeapon = FHProjectCharacterObj->GetEquipWeapon();
+
+	BaseWeaponObj = Cast<ABaseWeapon>(EquipWeapon);
+	if (BaseWeaponObj == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("nullptr:BaseWeaponObj, true"));
+		return;
+	}
 
 }
 
@@ -33,18 +41,12 @@ void UApplyDamageAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, U
 
 	UE_LOG(LogClass, Warning, TEXT("NotifyTick"));
 
-
-	DrawDebugLine
-	(
-		MeshComp->GetOwner()->GetWorld(),
-		TestL,
-		TestL2,
-		FColor::Yellow, false, 5.0f
-	);
+	BaseWeaponObj->Execute_Event_ClickAttack(EquipWeapon);
 }
 
 void UApplyDamageAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
+
 	UE_LOG(LogClass, Warning, TEXT("NotifyEnd"));
 }

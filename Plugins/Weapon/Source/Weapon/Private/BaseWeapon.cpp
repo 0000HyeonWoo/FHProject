@@ -5,6 +5,7 @@
 #include "WeaponInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
+#include "Components/SceneComponent.h"
 
 
 // Sets default values
@@ -36,7 +37,10 @@ ABaseWeapon::ABaseWeapon()
 	MaxRightClickDamage = 0;
 	SetMaxRightClickDamage(GetClickAttackDamage() * 1.5f);
 
-
+	//Set Attack Socket Name
+	//If you want to change Socket Name, Edit like this -> FName(TEXT("MySocketName"))
+	AttackStartSocketName = FName(TEXT("Attack_Start"));
+	AttackEndSocketName = FName(TEXT("Attack_End"));
 
 }
 
@@ -165,6 +169,7 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 
 		PlayAttackAnimMontage(AttackMontage);
+		bIsLeftClick = true;
 	}
 	else if (IsPressed == false)
 	{
@@ -208,6 +213,7 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 		UE_LOG(LogClass, Warning, TEXT("CalculatedRightClickDamage :: %d"), RightClickDamage);
 
 		PlayAttackAnimMontage(SpecialAttackMontage);
+		bIsLeftClick = false;
 
 		//After Calculate Damage, Initialize LeftClickCount 0;
 		InitializeLeftClickCount();
@@ -217,6 +223,29 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 	else if (IsPressed == false)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
+	}
+}
+
+void ABaseWeapon::Event_ClickAttack_Implementation()
+{
+	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack"));
+	//Click Event
+
+	FVector AttackStartLocation;
+	AttackStartLocation = StaticMesh->GetSocketLocation(AttackStartSocketName);
+
+	FVector AttackEndLocation;
+	AttackEndLocation = StaticMesh->GetSocketLocation(AttackEndSocketName);
+
+	if (GetIsLeftClick() == true)
+	{
+		UE_LOG(LogClass, Warning, TEXT("GetIsLeftClick == true"));
+
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("GetIsLeftClick == false"));
+
 	}
 }
 
@@ -259,7 +288,7 @@ void ABaseWeapon::PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage)
 	OwnerCharacter->PlayAnimMontage(TargetAttackMontage);
 }
 
-void ABaseWeapon::ApplyDamageToTargetActor()
+void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation()
 {
 	FHitResult AttackHitResult;
 	FCollisionObjectQueryParams QueryParams;

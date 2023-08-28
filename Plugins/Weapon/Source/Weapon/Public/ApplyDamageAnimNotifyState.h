@@ -6,6 +6,8 @@
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "ApplyDamageAnimNotifyState.generated.h"
 
+class AFHProjectCharacter;
+class ABaseWeapon;
 /**
  * 
  */
@@ -24,13 +26,7 @@ public:
 
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
-
 protected:
-	//Use When Attack Trace Function
-	FName AttackStartSocketName;
-	FName AttackEndSocketName;
-
-	FVector TestL;
-	FVector TestL2;
-
+	AActor* EquipWeapon;
+	ABaseWeapon* BaseWeaponObj;
 };
