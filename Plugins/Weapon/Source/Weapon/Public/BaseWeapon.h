@@ -135,7 +135,7 @@ public:
 
 
 	UFUNCTION(Server, Reliable)
-	void Req_ApplyDamageToTargetActor();
+	void Req_ApplyDamageToTargetActor(FVector Start, FVector End, float Damage);
 
 
 public:

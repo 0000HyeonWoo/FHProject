@@ -5,7 +5,9 @@
 #include "WeaponInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/Actor.h"
 #include "Components/SceneComponent.h"
+
 
 
 // Sets default values
@@ -214,11 +216,6 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 
 		PlayAttackAnimMontage(SpecialAttackMontage);
 		bIsLeftClick = false;
-
-		//After Calculate Damage, Initialize LeftClickCount 0;
-		InitializeLeftClickCount();
-		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
-
 	}
 	else if (IsPressed == false)
 	{
@@ -236,15 +233,28 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 
 	FVector AttackEndLocation;
 	AttackEndLocation = StaticMesh->GetSocketLocation(AttackEndSocketName);
+	
+
+	if (HasAuthority() == false)
+	{
+		UE_LOG(LogClass, Warning, TEXT("HasAuthority == false"));
+
+		return;
+	}
 
 	if (GetIsLeftClick() == true)
 	{
 		UE_LOG(LogClass, Warning, TEXT("GetIsLeftClick == true"));
-
+		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetClickAttackDamage());
 	}
 	else
 	{
 		UE_LOG(LogClass, Warning, TEXT("GetIsLeftClick == false"));
+		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
+
+		//After Calculate Damage, Initialize LeftClickCount 0;
+		InitializeLeftClickCount();
+		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 
 	}
 }
@@ -288,8 +298,11 @@ void ABaseWeapon::PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage)
 	OwnerCharacter->PlayAnimMontage(TargetAttackMontage);
 }
 
-void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation()
+void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVector End, float Damage)
 {
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor"));
+	UE_LOG(LogClass, Warning, TEXT("Damage :: %f"), Damage);
+
 	FHitResult AttackHitResult;
 	FCollisionObjectQueryParams QueryParams;
 	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
@@ -301,16 +314,30 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation()
 
 	FCollisionQueryParams QueryParamsIgnoredActor;
 	QueryParamsIgnoredActor.AddIgnoredActor(OwnerCharacter);
+	QueryParamsIgnoredActor.AddIgnoredActor(this);
 
-	//bool isHit = GetWorld()->LineTraceSingleByObjectType(AttackHitResult, vStart, vEnd, collisionObjectQuery, collisionQuery);
-	//DrawDebugLine(GetWorld(), vStart, vEnd, FColor::Yellow, false, 5.0f);
 
-	//if (isHit == false)
-		//return;
+	bool bIsHit = GetWorld()->LineTraceSingleByObjectType(AttackHitResult, Start, End, QueryParams, QueryParamsIgnoredActor);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 5.0f);
 
-	ACharacter* HitChar = Cast<ACharacter>(AttackHitResult.GetActor());
-	if (HitChar == nullptr)
+	if (bIsHit == false)
+	{
+		UE_LOG(LogClass, Warning, TEXT("bIsHit == false"));
 		return;
+	}
+	
 
-	//UGameplayStatics::ApplyDamage(HitChar, weaponData->Damage, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
+	AActor* HitTargetObj = Cast<AActor>(AttackHitResult.GetActor());
+
+	if (HitTargetObj == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("HitTargetObj == nullptr"));
+		return;
+	}
+
+	UE_LOG(LogClass, Warning, TEXT("Hit Actor :: %s"), *FString(HitTargetObj->GetName()));
+
+	UGameplayStatics::ApplyDamage(HitTargetObj, Damage, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamage End"));
+
 }

@@ -124,6 +124,13 @@ void AFHProjectCharacter::Tick(float DeltaTime)
 	}
 }
 
+float AFHProjectCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	UE_LOG(LogClass, Warning, TEXT("TakeDamage"));
+
+	return 0.0f;
+}
+
 void AFHProjectCharacter::Req_DoRollMove_Implementation()
 {
 	//Client
