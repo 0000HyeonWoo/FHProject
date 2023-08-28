@@ -301,7 +301,7 @@ void ABaseWeapon::PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage)
 void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVector End, float Damage)
 {
 	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor"));
-	UE_LOG(LogClass, Warning, TEXT("Damage :: %f"), Damage);
+	UE_LOG(LogClass, Warning, TEXT("Apply Damage :: %f"), Damage);
 
 	FHitResult AttackHitResult;
 	FCollisionObjectQueryParams QueryParams;
