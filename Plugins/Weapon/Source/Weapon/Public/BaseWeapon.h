@@ -78,44 +78,65 @@ protected:
 	//Owner Character
 	ACharacter* OwnerCharacter;
 
+	//----------[ Value ]----------
 	//Add Count When Completed Left Click Attack, Reset Count When Right Click Attack
 	int32 LeftClickCount;
 
+	//Attack Effect Scale Value
+	FVector AttackEffectScale;
+
+	//Set Effect Scale Value use this
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Setting")
+	float EffectScaleValue;
+
+	//Set When Click Event Acive
+	bool bIsLeftClick;
+
+
+	//----------[ Damage ]----------
 	//Damage Value
 	int32 ClickAttackDamage;
 
 	//Right Click Damage Limit Value
 	float MaxRightClickDamage;
 
+
+	//----------[ Socket Name ]----------
 	//Attack Point Socket Name
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Socket Name")
 	FName AttackStartSocketName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Socket Name")
 	FName AttackEndSocketName;
 
 	//Attack Effect Spawn Socket Name
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Socket Name")
 	FName AttackEffectSocketName;
 
-	//Attack Effect Scale Value
-	FVector AttackEffectScale;
-
-	//Set Effect Scale Value use this
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setting Weapon")
-	float EffectScaleValue;
-
 	//Attack Sound Spawn Socket Name
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Socket Name")
 	FName AttackSoundSocketName;
 
-	//Set When Click Event Acive
-	bool bIsLeftClick;
 
+	//----------[ Sphere Trace ]----------
 	//Use When SphereTrace Function
-	float SphereRadius;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sphere Trace Setting")
+	float TraceSphereRadius;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sphere Trace Setting")
+	bool bTraceComplex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sphere Trace Setting")
+	bool bIgnoreSelf;
+
+
+	//----------[ Range Weapon ]----------
 	//Check Weapon Attack Type
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setting Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Range Weapon Setting")
 	bool bIsRangeWeapon;
 
 	//Use This Value Only Range Attack
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setting Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Range Weapon Setting")
 	float AttackRange;
 
 
@@ -124,6 +145,7 @@ public:
 	ACharacter* GetOwnerCharacter() { return OwnerCharacter; };
 
 
+	//----------[ Left Click ]----------
 	//Return LeftClickCount
 	int32 GetLeftClickCount() { return LeftClickCount; };
 
@@ -133,13 +155,16 @@ public:
 	//Initialize LeftClickCount
 	void InitializeLeftClickCount() { LeftClickCount = 0; };
 
+	//Return IsLeftClick Value
+	bool GetIsLeftClick() { return bIsLeftClick; };
 
+
+	//----------[ Attack Damage ]----------
 	//Get Click Attack Damage
 	int32 GetClickAttackDamage() { return ClickAttackDamage; };
 	
 	//Set Click Attack Damage
 	void SetClickAttackDamage(int32 NewClickAttackDamage) { ClickAttackDamage = NewClickAttackDamage; };
-
 
 	//Set Max Right Click Damage
 	void SetMaxRightClickDamage(float NewMaxRightClickDamage) { MaxRightClickDamage = NewMaxRightClickDamage; };
@@ -147,10 +172,8 @@ public:
 	//Return MaxRightClickDamage
 	float GetMaxRightClickDamage() { return MaxRightClickDamage; };
 
-	//Return IsLeftClick Value
-	bool GetIsLeftClick() { return bIsLeftClick; };
 
-
+	//----------[ Effect Scale ]----------
 	//Set Attack Effect Scale Function (Effect Scale Value is Vector)
 	void SetAttackEffectScale(float NewScaleValue) { AttackEffectScale = { NewScaleValue, NewScaleValue, NewScaleValue }; };
 
@@ -166,6 +189,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Req_ApplyDamageToTargetActor(FVector StartLocation, FVector EndLocation, float Damage);
 
+	//Spawn Emitter At Location
 	UFUNCTION(NetMulticast, Reliable)
 	void Res_SpawnEmitterAtTargetLocation(FVector TargetLocation, FRotator TargetRotation);
 

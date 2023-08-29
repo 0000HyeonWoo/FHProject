@@ -62,9 +62,11 @@ ABaseWeapon::ABaseWeapon()
 	//Set Sound Spawn Socket Name
 	AttackSoundSocketName = FName(TEXT("Attack_Sound"));
 
-	//Set Sphere Radiut for Trace
-	//Set Value by Weapon's StaticMesh Attack Parts
-	SphereRadius = 32.f;
+	//Sphere Trace Setting
+	//Set this Value by Weapon's StaticMesh Attack Parts
+	TraceSphereRadius = 32.0f;
+	bTraceComplex = false;
+	bIgnoreSelf = true;
 
 }
 
@@ -272,6 +274,8 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 		//Set Attack Range(Attack End Location), Attack Like Bow Weapon
 		AttackEndLocation = AttackStartLocation + (OwnerCharacter->GetActorForwardVector() * AttackRange);
 
+		//** Move this function Res_SpawnEmitterAtTargetLocation **
+		//Because After Trace, Client can't see Effect
 		//If Range Weapon, Spawn Emitter at Attack End Location
 		//Rotation is Weapon StaticMesh's Rotation Value
 		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, AttackEndLocation, StaticMesh->GetRelativeRotation(), AttackEffectScale);
@@ -431,12 +435,6 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 		IgnoreActors.Add(OwnerCharacter);
 		IgnoreActors.Add(this);
 
-		bool bTraceComplex;
-		bTraceComplex = false;
-
-		bool bIgnoreSelf;
-		bIgnoreSelf = true;
-
 		//Start SphereTrace
 		//Color Red = Hit false, Green = Hit true
 		bIsHit = UKismetSystemLibrary::SphereTraceSingle
@@ -444,7 +442,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 			GetWorld(),
 			StartLocation,
 			EndLocation,
-			SphereRadius,
+			TraceSphereRadius,
 			UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_OverlapAll_Deprecated),
 			bTraceComplex,
 			IgnoreActors,
