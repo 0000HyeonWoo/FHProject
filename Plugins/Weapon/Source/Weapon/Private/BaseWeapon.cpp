@@ -391,6 +391,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVe
 		bIgnoreSelf = true;
 
 		//Start SphereTrace
+		//Color Red = Hit false, Green = Hit true
 		bIsHit = UKismetSystemLibrary::SphereTraceSingle
 		(
 			GetWorld(),
