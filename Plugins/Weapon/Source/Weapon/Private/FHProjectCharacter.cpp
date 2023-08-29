@@ -15,6 +15,7 @@
 #include "WeaponInterface.h"
 
 
+
 //////////////////////////////////////////////////////////////////////////
 // AFHProjectCharacter
 
@@ -364,6 +365,11 @@ void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AA
 	}
 	
 	}
+}
+
+float AFHProjectCharacter::GetCameraTargetArmLength()
+{
+	return CameraBoom->TargetArmLength;
 }
 
 FRotator AFHProjectCharacter::GetPlayerRotation()

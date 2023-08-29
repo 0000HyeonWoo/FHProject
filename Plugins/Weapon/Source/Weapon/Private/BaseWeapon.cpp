@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/SceneComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Math/Vector.h"
 
 
 
@@ -258,36 +259,52 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack"));
 	//Click Event
 
-	//Set Start, End Point Location Vector by Socket Location, Target is Weapon Mesh's Socket
+	//Set Attack Start, End Location Value by Weapon Attack Type
 	FVector AttackStartLocation;
-	AttackStartLocation = StaticMesh->GetSocketLocation(AttackStartSocketName);
-
 	FVector AttackEndLocation;
 
-	//Set Attack End Location Value by Weapon Attack Type
-	//Spawn Target Emitter by Weapon Type
-	//Spawn Emitter function use Effect Scale Value
 	if (bIsRangeWeapon == true)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsRangeWeapon, true"));
 		//Range Weapon
 
-		//Set Attack Range(Attack End Location), Attack Like Bow Weapon
-		AttackEndLocation = AttackStartLocation + (OwnerCharacter->GetActorForwardVector() * AttackRange);
+		//----------[ Start Calculate Attack Start, End Location ]----------
+		//Get Player's Camera Location
+		FVector CameraLocation;
+		CameraLocation = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
 
-		//** Move this function Res_SpawnEmitterAtTargetLocation **
-		//Because After Trace, Client can't see Effect
+		//Get Player's Camera Forward Vector
+		FVector CameraForwardVector;
+		CameraForwardVector = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetActorForwardVector();
+
+		//Get Distance to Player's Camera and StaticMesh's Attack Start Socket Location
+		float Distance;
+		Distance = FVector::Distance(CameraLocation, StaticMesh->GetSocketLocation(AttackStartSocketName));
+
+		//Attack Start Location is
+		AttackStartLocation = CameraLocation + (CameraForwardVector * Distance);
+
+		//Attack End Location is
+		AttackEndLocation = AttackStartLocation + (CameraForwardVector * AttackRange);
+		//----------[ End Calculate Attack Start, End Location ]----------
+
+
 		//If Range Weapon, Spawn Emitter at Attack End Location
 		//Rotation is Weapon StaticMesh's Rotation Value
 		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, AttackEndLocation, StaticMesh->GetRelativeRotation(), AttackEffectScale);
+		//** Move this function Res_SpawnEmitterAtTargetLocation **
+		//Because After Trace, Client can't see Effect
 	}
 	else
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsRangeWeapon, false"));
 		//Not Range Weapon
 
+		//Set Start, End Point Location Vector by Socket Location, Target is Weapon Mesh's Socket
+		AttackStartLocation = StaticMesh->GetSocketLocation(AttackStartSocketName);
 		AttackEndLocation = StaticMesh->GetSocketLocation(AttackEndSocketName);
 
+		//Spawn Target Emitter by Weapon Type
 		//If not Range Weapon, Spawn Emitter at AttackEffectSocket's Location, Rotation
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, StaticMesh->GetSocketLocation(AttackEffectSocketName), StaticMesh->GetSocketRotation(AttackEffectSocketName), AttackEffectScale);
 	}

@@ -253,6 +253,9 @@ public:
 	//Return Character's EquipWeapon
 	AActor* GetEquipWeapon() { return EquipWeapon; };
 
+	float GetCameraTargetArmLength();
+
+
 public:
 	// Use When Replicate Move Server and Client
 	UPROPERTY(Replicated)
