@@ -98,7 +98,7 @@ protected:
 	FVector AttackEffectScale;
 
 	//Set Effect Scale Value use this
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setting Weapon")
 	float EffectScaleValue;
 
 	//Attack Sound Spawn Socket Name
@@ -111,11 +111,11 @@ protected:
 	float SphereRadius;
 
 	//Check Weapon Attack Type
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setting Weapon")
 	bool bIsRangeWeapon;
 
 	//Use This Value Only Range Attack
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setting Weapon")
 	float AttackRange;
 
 
@@ -169,27 +169,27 @@ public:
 
 public:
 	// BaseWeapon has StaticMesh
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	UStaticMeshComponent* StaticMesh;
 
 	// Enum Weapon Type
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemType")
 	EItemType eWeaponType;
 
 	// Use When Attack - Left Click
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	UAnimMontage* AttackMontage;
 
 	// Use When Special Attack - Right Click
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	UAnimMontage* SpecialAttackMontage;
 
 	// Sound Cue
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	USoundBase* AttackSound;
 
 	// Attack Effect
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	UParticleSystem* AttackEffect;
 
 };

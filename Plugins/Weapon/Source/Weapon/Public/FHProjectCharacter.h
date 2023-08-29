@@ -213,11 +213,11 @@ public:
 
 public:
 	// Use When Roll
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	UAnimMontage* StandToRollMontage;
 
 	// Use When Roll
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	UAnimMontage* RunToRollMontage;
 
 };
