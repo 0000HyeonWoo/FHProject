@@ -50,6 +50,18 @@ ABaseWeapon::ABaseWeapon()
 	AttackStartSocketName = FName(TEXT("Attack_Start"));
 	AttackEndSocketName = FName(TEXT("Attack_End"));
 
+	//Set Emitter Spawn Socket Name
+	AttackEffectSocketName = FName(TEXT("Attack_Effect"));
+
+	//Set Attack Effect Scale
+	EffectScaleValue = 1.0f;
+
+	//Don't touch this function
+	SetAttackEffectScale(EffectScaleValue);
+
+	//Set Sound Spawn Socket Name
+	AttackSoundSocketName = FName(TEXT("Attack_Sound"));
+
 	//Set Sphere Radiut for Trace
 	//Set Value by Weapon's StaticMesh Attack Parts
 	SphereRadius = 32.f;
@@ -243,6 +255,13 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack"));
 	//Click Event
 
+	//Spawn Target Emitter at AttackEffectSocket's Location, Rotation
+	//This function use Scale Value
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, StaticMesh->GetSocketLocation(AttackEffectSocketName), StaticMesh->GetSocketRotation(AttackEffectSocketName), AttackEffectScale);
+
+	//Spawn Target Sound AttackSoundSocket's Location
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AttackSound, StaticMesh->GetSocketLocation(AttackSoundSocketName));
+
 	//Set Start, End Point Location Vector by Socket Location, Target is Weapon Mesh's Socket
 	FVector AttackStartLocation;
 	AttackStartLocation = StaticMesh->GetSocketLocation(AttackStartSocketName);
@@ -381,7 +400,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVe
 		//Add Ignore Actor
 		TArray<AActor*> IgnoreActors;
 		//----------[ Check Ignore Character Here ]----------
-		//IgnoreActors.Add(OwnerCharacter);
+		IgnoreActors.Add(OwnerCharacter);
 		IgnoreActors.Add(this);
 
 		bool bTraceComplex;

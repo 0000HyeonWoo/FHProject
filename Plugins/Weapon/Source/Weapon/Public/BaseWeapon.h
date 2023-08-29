@@ -76,14 +76,13 @@ public:
 
 protected:
 	//Owner Character
-	UPROPERTY(BlueprintReadWrite)
 	ACharacter* OwnerCharacter;
 
 	//Add Count When Completed Left Click Attack, Reset Count When Right Click Attack
-	int LeftClickCount;
+	int32 LeftClickCount;
 
 	//Damage Value
-	int ClickAttackDamage;
+	int32 ClickAttackDamage;
 
 	//Right Click Damage Limit Value
 	float MaxRightClickDamage;
@@ -91,6 +90,19 @@ protected:
 	//Attack Point Socket Name
 	FName AttackStartSocketName;
 	FName AttackEndSocketName;
+
+	//Attack Effect Spawn Socket Name
+	FName AttackEffectSocketName;
+
+	//Attack Effect Scale Value
+	FVector AttackEffectScale;
+
+	//Set Effect Scale Value use this
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float EffectScaleValue;
+
+	//Attack Sound Spawn Socket Name
+	FName AttackSoundSocketName;
 
 	//Set When Click Event Acive
 	bool bIsLeftClick;
@@ -113,7 +125,7 @@ public:
 
 
 	//Return LeftClickCount
-	int GetLeftClickCount() { return LeftClickCount; };
+	int32 GetLeftClickCount() { return LeftClickCount; };
 
 	//Add LeftClickCount
 	void AddLeftClickCount() { LeftClickCount += 1; };
@@ -123,10 +135,10 @@ public:
 
 
 	//Get Click Attack Damage
-	int GetClickAttackDamage() { return ClickAttackDamage; };
+	int32 GetClickAttackDamage() { return ClickAttackDamage; };
 	
 	//Set Click Attack Damage
-	void SetClickAttackDamage(int NewClickAttackDamage) { ClickAttackDamage = NewClickAttackDamage; };
+	void SetClickAttackDamage(int32 NewClickAttackDamage) { ClickAttackDamage = NewClickAttackDamage; };
 
 
 	//Set Max Right Click Damage
@@ -135,7 +147,12 @@ public:
 	//Return MaxRightClickDamage
 	float GetMaxRightClickDamage() { return MaxRightClickDamage; };
 
+	//Return IsLeftClick Value
 	bool GetIsLeftClick() { return bIsLeftClick; };
+
+
+	//Set Attack Effect Scale Function (Effect Scale Value is Vector)
+	void SetAttackEffectScale(float NewScaleValue) { AttackEffectScale = { NewScaleValue, NewScaleValue, NewScaleValue }; };
 
 
 public:
@@ -145,7 +162,7 @@ public:
 	//Play AnimMontage, Target is Weapon's OwnerCharacter
 	void PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage);
 
-
+	//Apply Damage to Actor Class
 	UFUNCTION(Server, Reliable)
 	void Req_ApplyDamageToTargetActor(FVector Start, FVector End, float Damage);
 
@@ -166,4 +183,13 @@ public:
 	// Use When Special Attack - Right Click
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* SpecialAttackMontage;
+
+	// Sound Cue
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* AttackSound;
+
+	// Attack Effect
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UParticleSystem* AttackEffect;
+
 };
