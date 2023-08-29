@@ -274,7 +274,7 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 
 		//If Range Weapon, Spawn Emitter at Attack End Location
 		//Rotation is Weapon StaticMesh's Rotation Value
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, AttackEndLocation, StaticMesh->GetRelativeRotation(), AttackEffectScale);
+		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, AttackEndLocation, StaticMesh->GetRelativeRotation(), AttackEffectScale);
 	}
 	else
 	{
@@ -360,7 +360,16 @@ void ABaseWeapon::PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage)
 	OwnerCharacter->PlayAnimMontage(TargetAttackMontage);
 }
 
-void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVector End, float Damage)
+void ABaseWeapon::Res_SpawnEmitterAtTargetLocation_Implementation(FVector TargetLocation, FRotator TargetRotation)
+{
+	UE_LOG(LogClass, Warning, TEXT("SpawnEmitterAtTargetLocation"));
+	//Range Weapon Use this function
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, TargetLocation, TargetRotation, AttackEffectScale);
+
+}
+
+void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocation, FVector EndLocation, float Damage)
 {
 	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor"));
 
@@ -385,24 +394,38 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVe
 	//Range Weapon is LineTrace, else Weapon SphereTrace
 	if (bIsRangeWeapon == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon == true"));
+		UE_LOG(LogClass, Warning, TEXT("IsRangeWeapon == true"));
 
-		//Add Ignore Actor
+		//----------[ Add Ignore Actor ]----------
 		FCollisionQueryParams QueryParamsIgnoredActor;
 		QueryParamsIgnoredActor.AddIgnoredActor(OwnerCharacter);
 		QueryParamsIgnoredActor.AddIgnoredActor(this);
 
 		//Trace by Location Value, Collision
-		bIsHit = GetWorld()->LineTraceSingleByObjectType(AttackHitResult, Start, End, QueryParams, QueryParamsIgnoredActor);
+		bIsHit = GetWorld()->LineTraceSingleByObjectType(AttackHitResult, StartLocation, EndLocation, QueryParams, QueryParamsIgnoredActor);
 
 		//DrawDebugLine for Check LineTrace Function is Working
-		DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 5.0f);
+		DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Yellow, false, 5.0f);
+
+		if (AttackHitResult.bBlockingHit == true)
+		{
+			UE_LOG(LogClass, Warning, TEXT("BlockingHit == true"));
+
+			Res_SpawnEmitterAtTargetLocation(AttackHitResult.Location, StaticMesh->GetRelativeRotation());
+		}
+		else
+		{
+			UE_LOG(LogClass, Warning, TEXT("BlockingHit == false"));
+
+			Res_SpawnEmitterAtTargetLocation(EndLocation, StaticMesh->GetRelativeRotation());
+		}
+
 	}
 	else
 	{
 		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon == false"));
 
-		//Add Ignore Actor
+		//----------[ Add Ignore Actor ]----------
 		TArray<AActor*> IgnoreActors;
 		//----------[ Check Ignore Character Here ]----------
 		IgnoreActors.Add(OwnerCharacter);
@@ -419,8 +442,8 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector Start, FVe
 		bIsHit = UKismetSystemLibrary::SphereTraceSingle
 		(
 			GetWorld(),
-			Start,
-			End,
+			StartLocation,
+			EndLocation,
 			SphereRadius,
 			UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_OverlapAll_Deprecated),
 			bTraceComplex,

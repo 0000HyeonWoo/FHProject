@@ -164,7 +164,10 @@ public:
 
 	//Apply Damage to Actor Class
 	UFUNCTION(Server, Reliable)
-	void Req_ApplyDamageToTargetActor(FVector Start, FVector End, float Damage);
+	void Req_ApplyDamageToTargetActor(FVector StartLocation, FVector EndLocation, float Damage);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Res_SpawnEmitterAtTargetLocation(FVector TargetLocation, FRotator TargetRotation);
 
 
 public:
