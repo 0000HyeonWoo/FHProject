@@ -124,6 +124,26 @@ void AFHProjectCharacter::Tick(float DeltaTime)
 	}
 }
 
+//----------[ Test function Start ]----------
+void AFHProjectCharacter::Req_Test_Implementation(int32 Value)
+{
+	Res_Test(Value);
+}
+
+void AFHProjectCharacter::Res_Test_Implementation(int32 Value)
+{
+	UE_LOG(LogClass, Warning, TEXT("Test Function"));
+
+	if (Value == NULL)
+	{
+		UE_LOG(LogClass, Warning, TEXT("Value Is NULL"));
+		Value = 0;
+	}
+
+	UE_LOG(LogClass, Warning, TEXT("Print Test :: %d"), Value);
+}
+//----------[ Test function End ]----------
+
 void AFHProjectCharacter::Req_DoRollMove_Implementation()
 {
 	//Client
@@ -400,6 +420,21 @@ void AFHProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 		//Attack - LeftClick
 		EnhancedInputComponent->BindAction(LeftClickAction, ETriggerEvent::Triggered, this, &AFHProjectCharacter::LeftClickInput);
 		EnhancedInputComponent->BindAction(LeftClickAction, ETriggerEvent::Completed, this, &AFHProjectCharacter::StopLeftClickInput);
+
+
+		//----------[ NumberKey Action ]----------
+		EnhancedInputComponent->BindAction(NumberKey1Action, ETriggerEvent::Triggered, this, &AFHProjectCharacter::NumberKey1Input);
+
+		EnhancedInputComponent->BindAction(NumberKey2Action, ETriggerEvent::Triggered, this, &AFHProjectCharacter::NumberKey2Input);
+
+		EnhancedInputComponent->BindAction(NumberKey3Action, ETriggerEvent::Triggered, this, &AFHProjectCharacter::NumberKey3Input);
+
+		EnhancedInputComponent->BindAction(NumberKey4Action, ETriggerEvent::Triggered, this, &AFHProjectCharacter::NumberKey4Input);
+
+		EnhancedInputComponent->BindAction(NumberKey5Action, ETriggerEvent::Triggered, this, &AFHProjectCharacter::NumberKey5Input);
+
+		EnhancedInputComponent->BindAction(NumberKey6Action, ETriggerEvent::Triggered, this, &AFHProjectCharacter::NumberKey6Input);
+
 	}
 
 }
@@ -597,6 +632,43 @@ void AFHProjectCharacter::StopLeftClickInput(const FInputActionValue& Value)
 	//Server
 	//IsPressed is false
 	Req_LeftClickAttack(false);
+}
+
+void AFHProjectCharacter::NumberKey1Input(const FInputActionValue& Value)
+{
+	Req_Test(1);
+}
+
+void AFHProjectCharacter::NumberKey2Input(const FInputActionValue& Value)
+{
+
+	Req_Test(2);
+}
+
+void AFHProjectCharacter::NumberKey3Input(const FInputActionValue& Value)
+{
+
+	Req_Test(3);
+}
+
+void AFHProjectCharacter::NumberKey4Input(const FInputActionValue& Value)
+{
+
+	Req_Test(4);
+}
+
+void AFHProjectCharacter::NumberKey5Input(const FInputActionValue& Value)
+{
+
+	Req_Test(5);
+
+}
+
+void AFHProjectCharacter::NumberKey6Input(const FInputActionValue& Value)
+{
+
+	Req_Test(6);
+
 }
 
 

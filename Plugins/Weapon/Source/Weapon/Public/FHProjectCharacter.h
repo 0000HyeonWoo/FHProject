@@ -64,6 +64,27 @@ class AFHProjectCharacter : public ACharacter, public IWeaponInterface
 	class UInputAction* LeftClickAction;
 
 
+	//----------[ Item Action ]----------
+	/** NumberKey Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* NumberKey1Action;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* NumberKey2Action;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* NumberKey3Action;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* NumberKey4Action;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* NumberKey5Action;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* NumberKey6Action;
+
+
 public:
 	AFHProjectCharacter();
 	
@@ -108,6 +129,25 @@ protected:
 	void StopLeftClickInput(const FInputActionValue& Value);
 
 
+	// ----------[ NumberKey Action ]----------
+	/** Called for NumberKey input */
+	void NumberKey1Input(const FInputActionValue& Value);
+
+	/** Called for NumberKey input */
+	void NumberKey2Input(const FInputActionValue& Value);
+
+	/** Called for NumberKey input */
+	void NumberKey3Input(const FInputActionValue& Value);
+
+	/** Called for NumberKey input */
+	void NumberKey4Input(const FInputActionValue& Value);
+
+	/** Called for NumberKey input */
+	void NumberKey5Input(const FInputActionValue& Value);
+
+	/** Called for NumberKey input */
+	void NumberKey6Input(const FInputActionValue& Value);
+
 
 protected:
 	// APawn interface
@@ -124,6 +164,17 @@ protected:
 
 // ----------[ Add FUNCTION ]----------
 public:
+	// ----------[ Test function start ]----------
+	// Test function
+	// Print UELog Only
+	UFUNCTION(Server, Reliable)
+	void Req_Test(int32 Value);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Res_Test(int32 Value);
+	// ----------[ Test function End ]----------
+
+
 	// Do Roll Move function
 	UFUNCTION(Server, Reliable)
 	void Req_DoRollMove();

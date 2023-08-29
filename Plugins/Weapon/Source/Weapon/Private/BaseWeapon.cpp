@@ -237,6 +237,7 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 			return;
 		}
 
+		//** Move This function ClickEvent **
 		//float RightClickDamage;
 		//RightClickDamage = GetCalculatedRightClickDamage();
 		//UE_LOG(LogClass, Warning, TEXT("CalculatedRightClickDamage :: %d"), RightClickDamage);
@@ -414,13 +415,11 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 		if (AttackHitResult.bBlockingHit == true)
 		{
 			UE_LOG(LogClass, Warning, TEXT("BlockingHit == true"));
-
 			Res_SpawnEmitterAtTargetLocation(AttackHitResult.Location, StaticMesh->GetRelativeRotation());
 		}
 		else
 		{
 			UE_LOG(LogClass, Warning, TEXT("BlockingHit == false"));
-
 			Res_SpawnEmitterAtTargetLocation(EndLocation, StaticMesh->GetRelativeRotation());
 		}
 
