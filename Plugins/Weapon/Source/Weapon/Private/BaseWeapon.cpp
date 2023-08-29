@@ -255,35 +255,40 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack"));
 	//Click Event
 
-	//Spawn Target Emitter at AttackEffectSocket's Location, Rotation
-	//This function use Scale Value
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, StaticMesh->GetSocketLocation(AttackEffectSocketName), StaticMesh->GetSocketRotation(AttackEffectSocketName), AttackEffectScale);
-
-	//Spawn Target Sound AttackSoundSocket's Location
-	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AttackSound, StaticMesh->GetSocketLocation(AttackSoundSocketName));
-
 	//Set Start, End Point Location Vector by Socket Location, Target is Weapon Mesh's Socket
 	FVector AttackStartLocation;
 	AttackStartLocation = StaticMesh->GetSocketLocation(AttackStartSocketName);
 
 	FVector AttackEndLocation;
 
-	//Set Value by Weapon Attack Type
+	//Set Attack End Location Value by Weapon Attack Type
+	//Spawn Target Emitter by Weapon Type
+	//Spawn Emitter function use Effect Scale Value
 	if (bIsRangeWeapon == true)
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsRangeWeapon, true"));
-
 		//Range Weapon
-		//Set Attack Range(Attack End Location) by Add Value(Vector Value, Use X Value Only)
+
+		//Set Attack Range(Attack End Location), Attack Like Bow Weapon
 		AttackEndLocation = AttackStartLocation + (OwnerCharacter->GetActorForwardVector() * AttackRange);
+
+		//If Range Weapon, Spawn Emitter at Attack End Location
+		//Rotation is Weapon StaticMesh's Rotation Value
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, AttackEndLocation, StaticMesh->GetRelativeRotation(), AttackEffectScale);
 	}
 	else
 	{
 		UE_LOG(LogClass, Warning, TEXT("IsRangeWeapon, false"));
+		//Not Range Weapon
 
 		AttackEndLocation = StaticMesh->GetSocketLocation(AttackEndSocketName);
+
+		//If not Range Weapon, Spawn Emitter at AttackEffectSocket's Location, Rotation
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, StaticMesh->GetSocketLocation(AttackEffectSocketName), StaticMesh->GetSocketRotation(AttackEffectSocketName), AttackEffectScale);
 	}
-	
+
+	//Spawn Target Sound AttackSoundSocket's Location
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AttackSound, StaticMesh->GetSocketLocation(AttackSoundSocketName));
 
 	//Check Has Authority, UNetDriver Error Come from here
 	if (HasAuthority() == false)
