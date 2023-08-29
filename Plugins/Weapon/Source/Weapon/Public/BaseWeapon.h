@@ -158,6 +158,8 @@ public:
 	//Return IsLeftClick Value
 	bool GetIsLeftClick() { return bIsLeftClick; };
 
+	void SetIsLeftClick(bool NewValue) { bIsLeftClick = NewValue; };
+
 
 	//----------[ Attack Damage ]----------
 	//Get Click Attack Damage
@@ -192,6 +194,7 @@ public:
 	//Spawn Emitter At Location
 	UFUNCTION(NetMulticast, Reliable)
 	void Res_SpawnEmitterAtTargetLocation(FVector TargetLocation, FRotator TargetRotation);
+
 
 
 public:

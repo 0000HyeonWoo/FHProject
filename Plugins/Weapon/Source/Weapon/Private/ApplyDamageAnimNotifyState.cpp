@@ -20,7 +20,7 @@ void UApplyDamageAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	UE_LOG(LogClass, Warning, TEXT("NotifyBegin"));
 
 	//Get Mesh's Owner
-	AFHProjectCharacter* FHProjectCharacterObj = Cast<AFHProjectCharacter>(MeshComp->GetOwner());
+	FHProjectCharacterObj = Cast<AFHProjectCharacter>(MeshComp->GetOwner());
 
 	//Check Character is nullptr
 	if (FHProjectCharacterObj == nullptr)

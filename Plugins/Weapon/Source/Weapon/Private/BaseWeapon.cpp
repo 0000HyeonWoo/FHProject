@@ -9,6 +9,7 @@
 #include "Components/SceneComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Math/Vector.h"
+#include "Net/UnrealNetwork.h"
 
 
 
@@ -199,7 +200,7 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 		PlayAttackAnimMontage(AttackMontage);
 
 		//Left Click is true
-		bIsLeftClick = true;
+		SetIsLeftClick(true);
 	}
 	else if (IsPressed == false)
 	{
@@ -246,7 +247,7 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 		PlayAttackAnimMontage(SpecialAttackMontage);
 
 		//Left Click is flase
-		bIsLeftClick = false;
+		SetIsLeftClick(false);
 	}
 	else if (IsPressed == false)
 	{
@@ -269,13 +270,20 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 		//Range Weapon
 
 		//----------[ Start Calculate Attack Start, End Location ]----------
+		
+		APlayerController* FirstPlayerController = GetWorld()->GetFirstPlayerController();
+		
 		//Get Player's Camera Location
 		FVector CameraLocation;
-		CameraLocation = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
+		CameraLocation = FirstPlayerController->PlayerCameraManager->GetCameraLocation();
+
+		UE_LOG(LogClass, Warning, TEXT("CameraLocation %s"), *CameraLocation.ToString());
+
+
 
 		//Get Player's Camera Forward Vector
 		FVector CameraForwardVector;
-		CameraForwardVector = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetActorForwardVector();
+		CameraForwardVector = FirstPlayerController->PlayerCameraManager->GetActorForwardVector();
 
 		//Get Distance to Player's Camera and StaticMesh's Attack Start Socket Location
 		float Distance;
@@ -287,6 +295,9 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 		//Attack End Location is
 		AttackEndLocation = AttackStartLocation + (CameraForwardVector * AttackRange);
 		//----------[ End Calculate Attack Start, End Location ]----------
+
+		UE_LOG(LogClass, Warning, TEXT("AttackStartLocation %s"), *AttackStartLocation.ToString());
+		UE_LOG(LogClass, Warning, TEXT("AttackEndLocation %s"), *AttackEndLocation.ToString());
 
 
 		//If Range Weapon, Spawn Emitter at Attack End Location
@@ -312,6 +323,13 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	//Spawn Target Sound AttackSoundSocket's Location
 	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AttackSound, StaticMesh->GetSocketLocation(AttackSoundSocketName));
 
+	if (GetIsLeftClick() == false)
+	{
+		//After Active Right Click Event, Initialize LeftClickCount 0;
+		InitializeLeftClickCount();
+		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
+	}
+
 	//Check Has Authority, UNetDriver Error Come from here
 	if (HasAuthority() == false)
 	{
@@ -334,11 +352,6 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 
 		//Right Click Damage Event Use Calculated Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
-
-		//After Active Right Click Event, Initialize LeftClickCount 0;
-		InitializeLeftClickCount();
-		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
-
 	}
 }
 
@@ -397,6 +410,9 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 
 	//Check Damage Value
 	UE_LOG(LogClass, Warning, TEXT("Apply Damage :: %f"), Damage);
+
+	UE_LOG(LogClass, Warning, TEXT("StartLocation %s"), *StartLocation.ToString());
+	UE_LOG(LogClass, Warning, TEXT("EndLocation %s"), *EndLocation.ToString());
 
 	//Trace Result Value
 	bool bIsHit;

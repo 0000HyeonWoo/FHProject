@@ -255,6 +255,12 @@ public:
 
 	float GetCameraTargetArmLength();
 
+	UFUNCTION(BlueprintPure)
+	FVector GetCameraLocation() { return GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation(); };
+
+	UFUNCTION(BlueprintPure)
+	FVector GetCameraForwardVector() { return GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetActorForwardVector(); };
+
 
 public:
 	// Use When Replicate Move Server and Client

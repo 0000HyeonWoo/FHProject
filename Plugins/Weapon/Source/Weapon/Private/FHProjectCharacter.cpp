@@ -97,6 +97,7 @@ void AFHProjectCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AFHProjectCharacter, PlayerRotation);
+
 }
 
 void AFHProjectCharacter::BeginPlay()
