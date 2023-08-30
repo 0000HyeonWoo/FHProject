@@ -50,12 +50,12 @@ void UApplyDamageAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, U
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
 
-	UE_LOG(LogClass, Warning, TEXT("NotifyTick"));
+	//UE_LOG(LogClass, Warning, TEXT("NotifyTick"));
 }
 
 void UApplyDamageAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
-	UE_LOG(LogClass, Warning, TEXT("NotifyEnd"));
+	//UE_LOG(LogClass, Warning, TEXT("NotifyEnd"));
 }

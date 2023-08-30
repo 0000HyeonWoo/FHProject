@@ -93,10 +93,10 @@ void ABaseWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (HasAuthority() == true)
+	/*if (HasAuthority() == true)
 	{
 		LeftClickCount = GetLeftClickCount();
-	}
+	}*/
 
 }
 
@@ -109,6 +109,13 @@ void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 	// BaseWeapon -> Weapon ex1 -> ex1.BeginPlay -> Set Enum Type ex1, Interface Event, Destroy
 	// Character(Interface Event) -> ....
+
+	//Check Weapon has Owner Character
+	if (OwnerCharacter != nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap::OwnerCharacter != nullptr"));
+		return;
+	}
 
 	// If HasAuthority is false = return
 	if (HasAuthority() == false)
@@ -301,7 +308,6 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	{
 		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::IsRangeWeapon == true"));
 		//Range Weapon
-
 		//----------[ Start Calculate Attack Start, End Location ]----------
 		
 		APlayerController* FirstPlayerController = GetWorld()->GetFirstPlayerController();
@@ -325,11 +331,11 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 
 		//Attack End Location is
 		AttackEndLocation = AttackStartLocation + (CameraForwardVector * AttackRange);
+
 		//----------[ End Calculate Attack Start, End Location ]----------
 
 		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::AttackStartLocation %s"), *AttackStartLocation.ToString());
 		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::AttackEndLocation %s"), *AttackEndLocation.ToString());
-
 
 		//If Range Weapon, Spawn Emitter at Attack End Location
 		//Rotation is Weapon StaticMesh's Rotation Value
@@ -387,12 +393,22 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 		//Right Click Damage Event Use Calculated Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
 	
-		//After Active Right Click Event, Initialize LeftClickCount 0;
-		InitializeLeftClickCount();
 		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::Initialize LeftClickCount :: %d"), LeftClickCount);
 	}
 
 	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack - End"));
+}
+
+void ABaseWeapon::Req_InitializeLeftClickCount_Implementation()
+{
+	UE_LOG(LogClass, Warning, TEXT("Req_InitializeLeftClickCount"));
+	Res_InitializeLeftClickCount();
+}
+
+void ABaseWeapon::Res_InitializeLeftClickCount_Implementation()
+{
+	UE_LOG(LogClass, Warning, TEXT("Res_InitializeLeftClickCount"));
+	LeftClickCount = 0;
 }
 
 float ABaseWeapon::GetCalculatedRightClickDamage()
@@ -436,6 +452,7 @@ void ABaseWeapon::PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage)
 	//Play Attack AnimMontage
 
 	OwnerCharacter->PlayAnimMontage(TargetAttackMontage);
+
 	UE_LOG(LogClass, Warning, TEXT("PlayAttackAnimMontage - End"));
 }
 
@@ -490,6 +507,8 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 		//DrawDebugLine for Check LineTrace Function is Working
 		DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Yellow, false, 5.0f);
 
+		//If LineTrace hit anything, Spawn Emitter at Trace Blocking Location
+		//Not hit anything, Spawn Emitter at Trace End Location
 		if (AttackHitResult.bBlockingHit == true)
 		{
 			UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::BlockingHit == true"));
@@ -537,6 +556,11 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 	if (bIsHit == false)
 	{
 		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::IsHit == false"));
+
+		//Initialize LeftClickCount 0;
+		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::InitializeLeftClickCount"));
+		Req_InitializeLeftClickCount();
+
 		return;
 	}
 
@@ -555,6 +579,16 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 
 	//Apply Damage to Hit Actor, This function Active Target's TakeDamage
 	UGameplayStatics::ApplyDamage(HitTargetObj, Damage, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
+
+	//Check Click was Right Click
+	if (GetIsLeftClick() == false)
+	{
+		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::GetIsLeftClick == false"));
+
+		//Initialize LeftClickCount 0;
+		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::InitializeLeftClickCount"));
+		Req_InitializeLeftClickCount();
+	}
 
 	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::ApplyDamage"));
 

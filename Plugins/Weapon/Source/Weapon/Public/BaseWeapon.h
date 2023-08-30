@@ -156,7 +156,14 @@ public:
 	void AddLeftClickCount() { LeftClickCount += 1; };
 
 	//Initialize LeftClickCount
-	void InitializeLeftClickCount() { LeftClickCount = 0; };
+	//void InitializeLeftClickCount() { LeftClickCount = 0; };
+
+	UFUNCTION(Server, Reliable)
+	void Req_InitializeLeftClickCount();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Res_InitializeLeftClickCount();
+
 
 	//Return IsLeftClick Value
 	bool GetIsLeftClick() { return bIsLeftClick; };
