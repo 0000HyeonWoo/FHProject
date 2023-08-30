@@ -3,13 +3,15 @@
 
 #include "BaseWeapon.h"
 #include "WeaponInterface.h"
+#include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Actor.h"
 #include "Components/SceneComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Math/Vector.h"
-#include "Net/UnrealNetwork.h"
+#include "FHProjectCharacter.h"
+
 
 
 
@@ -72,6 +74,13 @@ ABaseWeapon::ABaseWeapon()
 
 }
 
+void ABaseWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABaseWeapon, LeftClickCount);
+}
+
 // Called when the game starts or when spawned
 void ABaseWeapon::BeginPlay()
 {
@@ -102,8 +111,16 @@ void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		return;
 	}
 
+	AFHProjectCharacter* CharacterObj = Cast<AFHProjectCharacter>(OtherActor);
+
+	if (CharacterObj == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("CharacterObj::nullptr"));
+		return;
+	}
+
 	// Check Overlaped Actor has ( IWeaponInterface ) 
-	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(OtherActor);
+	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(CharacterObj);
 
 	// If ( WeaponInterfaceObj ) is nullptr = return
 	if (WeaponInterfaceObj == nullptr)
@@ -111,6 +128,8 @@ void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		UE_LOG(LogClass, Warning, TEXT("WeaponInterfaceObj::nullptr"));
 		return;
 	}
+
+	this->SetOwner(CharacterObj->GetController());
 
 	UE_LOG(LogClass, Warning, TEXT("Execute_EventGetItem"));
 	WeaponInterfaceObj->Execute_Event_GetItem(OtherActor, eWeaponType, this);
@@ -277,9 +296,7 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 		FVector CameraLocation;
 		CameraLocation = FirstPlayerController->PlayerCameraManager->GetCameraLocation();
 
-		UE_LOG(LogClass, Warning, TEXT("CameraLocation %s"), *CameraLocation.ToString());
-
-
+		//UE_LOG(LogClass, Warning, TEXT("CameraLocation %s"), *CameraLocation.ToString());
 
 		//Get Player's Camera Forward Vector
 		FVector CameraForwardVector;
@@ -330,12 +347,22 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
 	}
 
-	//Check Has Authority, UNetDriver Error Come from here
-	if (HasAuthority() == false)
+	//----------[ UNetDirver Error Start ]----------
+	//Check Has Authority
+	/*if (HasAuthority() == false)
 	{
 		UE_LOG(LogClass, Warning, TEXT("HasAuthority == false"));
 		return;
+	}*/
+
+	//Check Weapon's OwnerCharacter is First Index Player
+	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
+	{
+		UE_LOG(LogClass, Warning, TEXT("GetPlayerCharacter != OwnerCharacter"));
+		return;
 	}
+	//----------[ UNetDirver Error End ]----------
+
 
 	//Active Event by Left Click Value
 	//Use Start, End Location is Same, Difference is only Damage
@@ -353,6 +380,12 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 		//Right Click Damage Event Use Calculated Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
 	}
+}
+
+void ABaseWeapon::OnRep_LeftClickCount()
+{
+	UE_LOG(LogClass, Warning, TEXT("OnRep_LeftClickCount"));
+
 }
 
 float ABaseWeapon::GetCalculatedRightClickDamage()

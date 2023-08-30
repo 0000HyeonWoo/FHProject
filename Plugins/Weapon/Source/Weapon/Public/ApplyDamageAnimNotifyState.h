@@ -28,7 +28,7 @@ public:
 
 protected:
 	//Set Pointer Value When Notify Begin
-	AFHProjectCharacter* FHProjectCharacterObj;
-	AActor* EquipWeapon;
-	ABaseWeapon* BaseWeaponObj;
+	//AFHProjectCharacter* FHProjectCharacterObj;
+	//AActor* EquipWeapon;
+	//ABaseWeapon* BaseWeaponObj;
 };

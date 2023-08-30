@@ -51,6 +51,10 @@ class AFHProjectCharacter : public ACharacter, public IWeaponInterface
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* CrouchAction;
 
+	/** Get Item Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* GetItemAction;
+
 	/** Drop Item Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* DropItemAction;
@@ -112,6 +116,9 @@ protected:
 
 	/** Called for StopCrouch input */
 	void StopCrouchInput(const FInputActionValue& Value);
+
+	/** Called for Get Item input */
+	void GetItemInput(const FInputActionValue& Value);
 
 	/** Called for Drop Item input */
 	void DropItemInput(const FInputActionValue& Value);
@@ -196,6 +203,13 @@ public:
 	void Res_AttachToWeaponSocket(AActor* Item);
 
 
+	//Get Item Attach on Target Socket
+	UFUNCTION(Server, Reliable)
+	void Req_GetItem();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Res_GetItem(AActor* Item);
+
 	//Drop Item Attached on Target Socket
 	UFUNCTION(Server, Reliable)
 	void Req_DropItem();
@@ -253,14 +267,18 @@ public:
 	//Return Character's EquipWeapon
 	AActor* GetEquipWeapon() { return EquipWeapon; };
 
+	//Return Cameara Target Arm Length
 	float GetCameraTargetArmLength();
 
+	//Return Camera Location
 	UFUNCTION(BlueprintPure)
 	FVector GetCameraLocation() { return GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation(); };
 
+	//Return Camera Forward Vector
 	UFUNCTION(BlueprintPure)
 	FVector GetCameraForwardVector() { return GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetActorForwardVector(); };
 
+	AActor* FindWeapon();
 
 public:
 	// Use When Replicate Move Server and Client

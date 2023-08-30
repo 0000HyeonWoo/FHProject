@@ -20,7 +20,7 @@ void UApplyDamageAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	UE_LOG(LogClass, Warning, TEXT("NotifyBegin"));
 
 	//Get Mesh's Owner
-	FHProjectCharacterObj = Cast<AFHProjectCharacter>(MeshComp->GetOwner());
+	AFHProjectCharacter* FHProjectCharacterObj = Cast<AFHProjectCharacter>(MeshComp->GetOwner());
 
 	//Check Character is nullptr
 	if (FHProjectCharacterObj == nullptr)
@@ -30,16 +30,18 @@ void UApplyDamageAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	}
 	
 	//EquipWeapon is Character's Weapon
-	EquipWeapon = FHProjectCharacterObj->GetEquipWeapon();
+	AActor* EquipWeapon = FHProjectCharacterObj->GetEquipWeapon();
 
 	//Check Weapon
-	BaseWeaponObj = Cast<ABaseWeapon>(EquipWeapon);
+	ABaseWeapon* BaseWeaponObj = Cast<ABaseWeapon>(EquipWeapon);
 	if (BaseWeaponObj == nullptr)
 	{
 		UE_LOG(LogClass, Warning, TEXT("nullptr:BaseWeaponObj, true"));
 		return;
 	}
 
+	//Active Event
+	BaseWeaponObj->Execute_Event_ClickAttack(EquipWeapon);
 }
 
 void UApplyDamageAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
@@ -47,9 +49,6 @@ void UApplyDamageAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, U
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
 
 	UE_LOG(LogClass, Warning, TEXT("NotifyTick"));
-
-	//Active Event
-	BaseWeaponObj->Execute_Event_ClickAttack(EquipWeapon);
 }
 
 void UApplyDamageAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)

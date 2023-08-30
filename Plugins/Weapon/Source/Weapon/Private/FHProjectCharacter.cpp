@@ -98,6 +98,7 @@ void AFHProjectCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 	DOREPLIFETIME(AFHProjectCharacter, PlayerRotation);
 
+
 }
 
 void AFHProjectCharacter::BeginPlay()
@@ -254,6 +255,39 @@ void AFHProjectCharacter::Res_AttachToWeaponSocket_Implementation(AActor* Item)
 	WeaponInterfaceObj->Execute_Event_AttachToComponent(Item, this, WeaponSocketName);
 }
 
+void AFHProjectCharacter::Req_GetItem_Implementation()
+{
+	AActor* Weapon = FindWeapon();
+
+	if(Weapon == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("nullptr::Weapon"));
+		return;
+	}
+
+	Weapon->SetOwner(GetController());
+
+	Res_GetItem(Weapon);
+}
+
+void AFHProjectCharacter::Res_GetItem_Implementation(AActor* Item)
+{
+	if (IsValid(EquipWeapon))
+	{
+		return;
+	}
+
+	EquipWeapon = Item;
+
+	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(Item);
+	if (WeaponInterfaceObj == nullptr)
+	{
+		return;
+	}
+
+	WeaponInterfaceObj->Execute_Event_AttachToComponent(Item, this, WeaponSocketName);
+}
+
 void AFHProjectCharacter::Req_DropItem_Implementation()
 {
 	//Server
@@ -360,6 +394,7 @@ void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AA
 			return;
 		}
 
+
 		Res_AttachToWeaponSocket(Item);
 
 		break;
@@ -371,6 +406,31 @@ void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AA
 float AFHProjectCharacter::GetCameraTargetArmLength()
 {
 	return CameraBoom->TargetArmLength;
+}
+
+AActor* AFHProjectCharacter::FindWeapon()
+{
+	UE_LOG(LogClass, Warning, TEXT("FindWeapon"));
+	TArray<AActor*> ActorsArray;
+	GetCapsuleComponent()->GetOverlappingActors(ActorsArray, ABaseWeapon::StaticClass());
+
+	double MostShortDistance = 99999999.0f;
+	AActor* Weapon = nullptr;
+
+	for (AActor* TargetWeapon : ActorsArray)
+	{
+		double DistanceToCharacter = FVector::Dist(TargetWeapon->GetActorLocation(), GetActorLocation());
+
+		if (MostShortDistance < DistanceToCharacter)
+		{
+			continue;
+		}
+
+		MostShortDistance = DistanceToCharacter;
+		Weapon = TargetWeapon;
+	}
+
+	return Weapon;
 }
 
 FRotator AFHProjectCharacter::GetPlayerRotation()
@@ -393,6 +453,8 @@ FRotator AFHProjectCharacter::GetPlayerRotation()
 
 void AFHProjectCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
@@ -416,6 +478,9 @@ void AFHProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 		//Crouch
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &AFHProjectCharacter::CrouchInput);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AFHProjectCharacter::StopCrouchInput);
+
+		//Get Item
+		EnhancedInputComponent->BindAction(GetItemAction, ETriggerEvent::Triggered, this, &AFHProjectCharacter::GetItemInput);
 
 		//Drop Item
 		EnhancedInputComponent->BindAction(DropItemAction, ETriggerEvent::Triggered, this, &AFHProjectCharacter::DropItemInput);
@@ -558,6 +623,15 @@ void AFHProjectCharacter::StopCrouchInput(const FInputActionValue& Value)
 	
 }
 
+void AFHProjectCharacter::GetItemInput(const FInputActionValue& Value)
+{
+	//Get Item Action Input
+	UE_LOG(LogClass, Warning, TEXT("GetItemInput"));
+
+	//Server
+	//Req_GetItem();
+}
+
 void AFHProjectCharacter::DropItemInput(const FInputActionValue& Value)
 {
 	//Drop Item Action Input
@@ -677,7 +751,5 @@ void AFHProjectCharacter::NumberKey6Input(const FInputActionValue& Value)
 	Req_Test(6);
 
 }
-
-
 
 

@@ -80,6 +80,7 @@ protected:
 
 	//----------[ Value ]----------
 	//Add Count When Completed Left Click Attack, Reset Count When Right Click Attack
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_LeftClickCount)
 	int32 LeftClickCount;
 
 	//Attack Effect Scale Value
@@ -149,8 +150,11 @@ public:
 	//Return LeftClickCount
 	int32 GetLeftClickCount() { return LeftClickCount; };
 
+	UFUNCTION()
+	void OnRep_LeftClickCount();
+
 	//Add LeftClickCount
-	void AddLeftClickCount() { LeftClickCount += 1; };
+	void AddLeftClickCount() { LeftClickCount += 1; OnRep_LeftClickCount(); };
 
 	//Initialize LeftClickCount
 	void InitializeLeftClickCount() { LeftClickCount = 0; };
