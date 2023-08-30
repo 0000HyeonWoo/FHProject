@@ -556,6 +556,8 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 	//Apply Damage to Hit Actor, This function Active Target's TakeDamage
 	UGameplayStatics::ApplyDamage(HitTargetObj, Damage, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
 
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::ApplyDamage"));
+
 	//Check ApplyDamage End
 	//UE_LOG(LogClass, Warning, TEXT("ApplyDamage End"));
 
