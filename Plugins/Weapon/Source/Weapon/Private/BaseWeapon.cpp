@@ -93,11 +93,16 @@ void ABaseWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (HasAuthority() == true)
+	{
+		LeftClickCount = GetLeftClickCount();
+	}
+
 }
 
 void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap"));
+	UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap - Start"));
 
 	// BaseWeapon -> ~Weapon(BaseWeapon) -> Begin Play -> Set Enum Type ->  Event(Enum Type) ->
 	// Character(Interface Event) -> Enum Switch -> Cast -> Cast Target Event
@@ -108,6 +113,7 @@ void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	// If HasAuthority is false = return
 	if (HasAuthority() == false)
 	{
+		UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap::HasAuthority == false"));
 		return;
 	}
 
@@ -115,7 +121,7 @@ void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 	if (CharacterObj == nullptr)
 	{
-		UE_LOG(LogClass, Warning, TEXT("CharacterObj::nullptr"));
+		UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap::CharacterObj == nullptr"));
 		return;
 	}
 
@@ -125,20 +131,20 @@ void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	// If ( WeaponInterfaceObj ) is nullptr = return
 	if (WeaponInterfaceObj == nullptr)
 	{
-		UE_LOG(LogClass, Warning, TEXT("WeaponInterfaceObj::nullptr"));
+		UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap::WeaponInterfaceObj == nullptr"));
 		return;
 	}
 
 	this->SetOwner(CharacterObj->GetController());
 
-	UE_LOG(LogClass, Warning, TEXT("Execute_EventGetItem"));
+	UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap::Execute_EventGetItem"));
 	WeaponInterfaceObj->Execute_Event_GetItem(OtherActor, eWeaponType, this);
 
 	// If Actor Destroyed, Character's AttachToComponent function doesn't work
 	//Destroy();
 
-	UE_LOG(LogClass, Warning, TEXT("Character Name :: %s"), *OtherActor->GetName());
-
+	UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap::Character Name :: %s"), *OtherActor->GetName());
+	UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap - End"));
 }
 
 void ABaseWeapon::Event_Test_Implementation()
@@ -150,12 +156,13 @@ void ABaseWeapon::Event_Test_Implementation()
 void ABaseWeapon::Req_TestFunction_Implementation()
 {
 	//Test Function
-	UE_LOG(LogClass, Warning, TEXT("Event_Test"));
+	UE_LOG(LogClass, Warning, TEXT("Req_TestFunction::Event_Test - Start"));
+	UE_LOG(LogClass, Warning, TEXT("Req_TestFunction::Event_Test - End"));
 }
 
 void ABaseWeapon::Event_AttachToComponent_Implementation(ACharacter* TargetCharacter, const FName& TargetSocketName)
 {
-	UE_LOG(LogClass, Warning, TEXT("Event_AttachToComponent"));
+	UE_LOG(LogClass, Warning, TEXT("Event_AttachToComponent - Start"));
 
 	// Set Owner Character
 	OwnerCharacter = TargetCharacter;
@@ -166,11 +173,13 @@ void ABaseWeapon::Event_AttachToComponent_Implementation(ACharacter* TargetChara
 	// And Attach to Target Component Name ( FName("weapon") ) on Character Mesh
 	AttachToComponent(TargetCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TargetSocketName);
 
+	UE_LOG(LogClass, Warning, TEXT("Event_AttachToComponent - End"));
+
 }
 
 void ABaseWeapon::Event_DetachFromActor_Implementation(ACharacter* TargetCharacter)
 {
-	UE_LOG(LogClass, Warning, TEXT("Event_DetachFromActor"));
+	UE_LOG(LogClass, Warning, TEXT("Event_DetachFromActor - Start"));
 
 	// Set Owner Character null
 	OwnerCharacter = nullptr;
@@ -180,41 +189,43 @@ void ABaseWeapon::Event_DetachFromActor_Implementation(ACharacter* TargetCharact
 
 	// Detach from Owner Character
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+	UE_LOG(LogClass, Warning, TEXT("Event_DetachFromActor - End"));
 }
 
 void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 {
 	//Character Left Click Input Event Active this function
-	UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack"));
+	UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack - Start"));
 
 	if (IsPressed == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("IsPressed true"));
+		UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::IsPressed true"));
 
 		//Check Weapon has OwnerCharacter
 		if (OwnerCharacter == nullptr)
 		{
-			UE_LOG(LogClass, Warning, TEXT("OwnerCharacter::nullptr"));
+			UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::OwnerCharacter == nullptr"));
 			return;
 		}
 
 		//Check Any Montage Playing
 		if (OwnerCharacter->GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() == true)
 		{
-			UE_LOG(LogClass, Warning, TEXT("IsAnyMontagePlaying::true"));
+			UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::IsAnyMontagePlaying == true"));
 			return;
 		}
 
 		// If AttackMontage Is Not Valid = return
 		if (IsValid(AttackMontage) == false)
 		{
-			UE_LOG(LogClass, Warning, TEXT("IsValid::AttackMontage, false"));
+			UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::IsValid(AttackMontage) == false"));
 			return;
 		}
 
 		//Add Left Click Count
 		AddLeftClickCount();
-		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
+		UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::LeftClickCount :: %d"), LeftClickCount);
 
 		PlayAttackAnimMontage(AttackMontage);
 
@@ -223,38 +234,39 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 	}
 	else if (IsPressed == false)
 	{
-		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
+		UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::IsPressed false"));
 	}
 
+	UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack - End"));
 }
 
 void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 {
 	//Character Right Click Input Event Active this function
-	UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack"));
+	UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack - Start"));
 
 	if (IsPressed == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("IsPressed true"));
+		UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::IsPressed true"));
 
 		//Check Weapon has OwnerCharacter
 		if (OwnerCharacter == nullptr)
 		{
-			UE_LOG(LogClass, Warning, TEXT("OwnerCharacter::nullptr"));
+			UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::OwnerCharacter::nullptr"));
 			return;
 		}
 
 		//Check Any Montage Playing
 		if (OwnerCharacter->GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() == true)
 		{
-			UE_LOG(LogClass, Warning, TEXT("IsAnyMontagePlaying::true"));
+			UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::IsAnyMontagePlaying::true"));
 			return;
 		}
 
 		// If SpecialAttackMontage Is Not Valid = return
 		if (IsValid(SpecialAttackMontage) == false)
 		{
-			UE_LOG(LogClass, Warning, TEXT("IsValid::SpecialAttackMontage, false"));
+			UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::IsValid::SpecialAttackMontage, false"));
 			return;
 		}
 
@@ -270,13 +282,15 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 	}
 	else if (IsPressed == false)
 	{
-		UE_LOG(LogClass, Warning, TEXT("IsPressed false"));
+		UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::IsPressed false"));
 	}
+
+	UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack - End"));
 }
 
 void ABaseWeapon::Event_ClickAttack_Implementation()
 {
-	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack"));
+	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack - Start"));
 	//Click Event
 
 	//Set Attack Start, End Location Value by Weapon Attack Type
@@ -285,7 +299,7 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 
 	if (bIsRangeWeapon == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("IsRangeWeapon, true"));
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::IsRangeWeapon == true"));
 		//Range Weapon
 
 		//----------[ Start Calculate Attack Start, End Location ]----------
@@ -313,8 +327,8 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 		AttackEndLocation = AttackStartLocation + (CameraForwardVector * AttackRange);
 		//----------[ End Calculate Attack Start, End Location ]----------
 
-		UE_LOG(LogClass, Warning, TEXT("AttackStartLocation %s"), *AttackStartLocation.ToString());
-		UE_LOG(LogClass, Warning, TEXT("AttackEndLocation %s"), *AttackEndLocation.ToString());
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::AttackStartLocation %s"), *AttackStartLocation.ToString());
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::AttackEndLocation %s"), *AttackEndLocation.ToString());
 
 
 		//If Range Weapon, Spawn Emitter at Attack End Location
@@ -325,7 +339,7 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	}
 	else
 	{
-		UE_LOG(LogClass, Warning, TEXT("IsRangeWeapon, false"));
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::IsRangeWeapon == false"));
 		//Not Range Weapon
 
 		//Set Start, End Point Location Vector by Socket Location, Target is Weapon Mesh's Socket
@@ -340,13 +354,6 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	//Spawn Target Sound AttackSoundSocket's Location
 	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AttackSound, StaticMesh->GetSocketLocation(AttackSoundSocketName));
 
-	if (GetIsLeftClick() == false)
-	{
-		//After Active Right Click Event, Initialize LeftClickCount 0;
-		InitializeLeftClickCount();
-		UE_LOG(LogClass, Warning, TEXT("LeftClickCount :: %d"), LeftClickCount);
-	}
-
 	//----------[ UNetDirver Error Start ]----------
 	//Check Has Authority
 	/*if (HasAuthority() == false)
@@ -358,7 +365,7 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	//Check Weapon's OwnerCharacter is First Index Player
 	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
 	{
-		UE_LOG(LogClass, Warning, TEXT("GetPlayerCharacter != OwnerCharacter"));
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetPlayerCharacter != OwnerCharacter"));
 		return;
 	}
 	//----------[ UNetDirver Error End ]----------
@@ -368,29 +375,29 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	//Use Start, End Location is Same, Difference is only Damage
 	if (GetIsLeftClick() == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("GetIsLeftClick == true"));
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetIsLeftClick == true"));
 
 		//Left Click Damage Event Use Default Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetClickAttackDamage());
 	}
 	else
 	{
-		UE_LOG(LogClass, Warning, TEXT("GetIsLeftClick == false"));
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetIsLeftClick == false"));
 
 		//Right Click Damage Event Use Calculated Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
+	
+		//After Active Right Click Event, Initialize LeftClickCount 0;
+		InitializeLeftClickCount();
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::Initialize LeftClickCount :: %d"), LeftClickCount);
 	}
-}
 
-void ABaseWeapon::OnRep_LeftClickCount()
-{
-	UE_LOG(LogClass, Warning, TEXT("OnRep_LeftClickCount"));
-
+	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack - End"));
 }
 
 float ABaseWeapon::GetCalculatedRightClickDamage()
 {
-	UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage"));
+	UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage - Start"));
 	//Calculate Right Click Damage
 
 	//Create Return Value
@@ -403,49 +410,54 @@ float ABaseWeapon::GetCalculatedRightClickDamage()
 
 	//RightClickDamage increase by LeftClickCount Value
 	//Each Left Click increase Damage Value 10%
+	UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage::LeftClickCount :: %d"), GetLeftClickCount());
 	RightClickDamage = GetClickAttackDamage() + (GetClickAttackDamage() * (GetLeftClickCount() * 0.1f));
 
 	//Check Calculated Damage Value
 	if (RightClickDamage > GetMaxRightClickDamage())
 	{
-		UE_LOG(LogClass, Warning, TEXT("RightClickDamage > GetMaxRightClickDamage"));
-		UE_LOG(LogClass, Warning, TEXT("RightClickDamage Value Before Change:: %f"), RightClickDamage);
+		UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage::RightClickDamage > GetMaxRightClickDamage"));
+		UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage::RightClickDamage Value Before Change:: %f"), RightClickDamage);
 		//If Calculated Value bigger than Max Value, Set Calculated Value to Max Value
 		RightClickDamage = GetMaxRightClickDamage();
 	}
 	
 	//Check Calculated Value
-	UE_LOG(LogClass, Warning, TEXT("RightClickDamage :: %f"), RightClickDamage);
+	UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage::RightClickDamage :: %f"), RightClickDamage);
+
+	UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage - End"));
 
 	return RightClickDamage;
 }
 
 void ABaseWeapon::PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage)
 {
-	UE_LOG(LogClass, Warning, TEXT("PlayAttackAnimMontage"));
+	UE_LOG(LogClass, Warning, TEXT("PlayAttackAnimMontage - Start"));
 	//Play Attack AnimMontage
 
 	OwnerCharacter->PlayAnimMontage(TargetAttackMontage);
+	UE_LOG(LogClass, Warning, TEXT("PlayAttackAnimMontage - End"));
 }
 
 void ABaseWeapon::Res_SpawnEmitterAtTargetLocation_Implementation(FVector TargetLocation, FRotator TargetRotation)
 {
-	UE_LOG(LogClass, Warning, TEXT("SpawnEmitterAtTargetLocation"));
+	UE_LOG(LogClass, Warning, TEXT("SpawnEmitterAtTargetLocation - Start"));
 	//Range Weapon Use this function
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, TargetLocation, TargetRotation, AttackEffectScale);
 
+	UE_LOG(LogClass, Warning, TEXT("SpawnEmitterAtTargetLocation - End"));
 }
 
 void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocation, FVector EndLocation, float Damage)
 {
-	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor"));
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor - Start"));
 
 	//Check Damage Value
-	UE_LOG(LogClass, Warning, TEXT("Apply Damage :: %f"), Damage);
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::Apply Damage :: %f"), Damage);
 
-	UE_LOG(LogClass, Warning, TEXT("StartLocation %s"), *StartLocation.ToString());
-	UE_LOG(LogClass, Warning, TEXT("EndLocation %s"), *EndLocation.ToString());
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::StartLocation %s"), *StartLocation.ToString());
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::EndLocation %s"), *EndLocation.ToString());
 
 	//Trace Result Value
 	bool bIsHit;
@@ -465,7 +477,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 	//Range Weapon is LineTrace, else Weapon SphereTrace
 	if (bIsRangeWeapon == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("IsRangeWeapon == true"));
+		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::IsRangeWeapon == true"));
 
 		//----------[ Add Ignore Actor ]----------
 		FCollisionQueryParams QueryParamsIgnoredActor;
@@ -480,19 +492,19 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 
 		if (AttackHitResult.bBlockingHit == true)
 		{
-			UE_LOG(LogClass, Warning, TEXT("BlockingHit == true"));
+			UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::BlockingHit == true"));
 			Res_SpawnEmitterAtTargetLocation(AttackHitResult.Location, StaticMesh->GetRelativeRotation());
 		}
 		else
 		{
-			UE_LOG(LogClass, Warning, TEXT("BlockingHit == false"));
+			UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::BlockingHit == false"));
 			Res_SpawnEmitterAtTargetLocation(EndLocation, StaticMesh->GetRelativeRotation());
 		}
 
 	}
 	else
 	{
-		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon == false"));
+		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::IsRangeWeapon == false"));
 
 		//----------[ Add Ignore Actor ]----------
 		TArray<AActor*> IgnoreActors;
@@ -524,7 +536,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 	//If Trace(Attack) can't hit Anything, return
 	if (bIsHit == false)
 	{
-		UE_LOG(LogClass, Warning, TEXT("bIsHit == false"));
+		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::IsHit == false"));
 		return;
 	}
 
@@ -534,17 +546,19 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 	//Check Hit Actor nullptr
 	if (HitTargetObj == nullptr)
 	{
-		UE_LOG(LogClass, Warning, TEXT("HitTargetObj == nullptr"));
+		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::HitTargetObj == nullptr"));
 		return;
 	}
 	
 	//Check Hit Actor's Name
-	UE_LOG(LogClass, Warning, TEXT("Hit Actor :: %s"), *FString(HitTargetObj->GetName()));
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::Hit Actor :: %s"), *FString(HitTargetObj->GetName()));
 
 	//Apply Damage to Hit Actor, This function Active Target's TakeDamage
 	UGameplayStatics::ApplyDamage(HitTargetObj, Damage, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
 
 	//Check ApplyDamage End
 	//UE_LOG(LogClass, Warning, TEXT("ApplyDamage End"));
+
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor - End"));
 
 }

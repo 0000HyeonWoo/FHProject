@@ -17,7 +17,7 @@ UApplyDamageAnimNotifyState::UApplyDamageAnimNotifyState(const FObjectInitialize
 void UApplyDamageAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
-	UE_LOG(LogClass, Warning, TEXT("NotifyBegin"));
+	UE_LOG(LogClass, Warning, TEXT("NotifyBegin - Start"));
 
 	//Get Mesh's Owner
 	AFHProjectCharacter* FHProjectCharacterObj = Cast<AFHProjectCharacter>(MeshComp->GetOwner());
@@ -25,7 +25,7 @@ void UApplyDamageAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	//Check Character is nullptr
 	if (FHProjectCharacterObj == nullptr)
 	{
-		UE_LOG(LogClass, Warning, TEXT("nullptr:FHProjectCharacterObj, true"));
+		UE_LOG(LogClass, Warning, TEXT("NotifyBegin::FHProjectCharacterObj == nullptr"));
 		return;
 	}
 	
@@ -36,12 +36,14 @@ void UApplyDamageAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	ABaseWeapon* BaseWeaponObj = Cast<ABaseWeapon>(EquipWeapon);
 	if (BaseWeaponObj == nullptr)
 	{
-		UE_LOG(LogClass, Warning, TEXT("nullptr:BaseWeaponObj, true"));
+		UE_LOG(LogClass, Warning, TEXT("NotifyBegin::BaseWeaponObj == nullptr"));
 		return;
 	}
 
 	//Active Event
 	BaseWeaponObj->Execute_Event_ClickAttack(EquipWeapon);
+
+	UE_LOG(LogClass, Warning, TEXT("NotifyBegin - End"));
 }
 
 void UApplyDamageAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)

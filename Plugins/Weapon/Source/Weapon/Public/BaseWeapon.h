@@ -80,7 +80,7 @@ protected:
 
 	//----------[ Value ]----------
 	//Add Count When Completed Left Click Attack, Reset Count When Right Click Attack
-	UPROPERTY(Replicated, ReplicatedUsing = OnRep_LeftClickCount)
+	UPROPERTY(Replicated)
 	int32 LeftClickCount;
 
 	//Attack Effect Scale Value
@@ -96,9 +96,11 @@ protected:
 
 	//----------[ Damage ]----------
 	//Damage Value
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage Setting")
 	int32 ClickAttackDamage;
 
 	//Right Click Damage Limit Value
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage Setting")
 	float MaxRightClickDamage;
 
 
@@ -150,11 +152,8 @@ public:
 	//Return LeftClickCount
 	int32 GetLeftClickCount() { return LeftClickCount; };
 
-	UFUNCTION()
-	void OnRep_LeftClickCount();
-
 	//Add LeftClickCount
-	void AddLeftClickCount() { LeftClickCount += 1; OnRep_LeftClickCount(); };
+	void AddLeftClickCount() { LeftClickCount += 1; };
 
 	//Initialize LeftClickCount
 	void InitializeLeftClickCount() { LeftClickCount = 0; };

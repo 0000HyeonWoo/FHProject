@@ -97,8 +97,6 @@ void AFHProjectCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AFHProjectCharacter, PlayerRotation);
-
-
 }
 
 void AFHProjectCharacter::BeginPlay()
@@ -135,15 +133,16 @@ void AFHProjectCharacter::Req_Test_Implementation(int32 Value)
 
 void AFHProjectCharacter::Res_Test_Implementation(int32 Value)
 {
-	UE_LOG(LogClass, Warning, TEXT("Test Function"));
+	UE_LOG(LogClass, Warning, TEXT("Test Function - Start"));
 
 	if (Value == NULL)
 	{
-		UE_LOG(LogClass, Warning, TEXT("Value Is NULL"));
+		UE_LOG(LogClass, Warning, TEXT("Test Function::Value Is NULL"));
 		Value = 0;
 	}
 
-	UE_LOG(LogClass, Warning, TEXT("Print Test :: %d"), Value);
+	UE_LOG(LogClass, Warning, TEXT("Test Function::Print Test :: %d"), Value);
+	UE_LOG(LogClass, Warning, TEXT("Test Function - End"));
 }
 //----------[ Test function End ]----------
 
@@ -155,40 +154,40 @@ void AFHProjectCharacter::Req_DoRollMove_Implementation()
 
 void AFHProjectCharacter::Res_DoRollMove_Implementation()
 {
-	UE_LOG(LogClass, Warning, TEXT("DoRollMove"));
+	UE_LOG(LogClass, Warning, TEXT("DoRollMove - Start"));
 
 	// Play Target AnimMontage When Target AnimMontage Is not Playing
 	if (bIsMontagePlaying() == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("bIsMontagePlaying::true"));
+		UE_LOG(LogClass, Warning, TEXT("DoRollMove::IsMontagePlaying == true"));
 		return;
 	}
 
 	// If Character Is Falling = return
 	if (GetCharacterMovement()->IsFalling() == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("IsFalling::true"));
+		UE_LOG(LogClass, Warning, TEXT("DoRollMove::IsFalling == true"));
 		return;
 	}
 
 	// if Character Is Crouched = return
 	if (bIsCrouched == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("bIsCrouched::true"));
+		UE_LOG(LogClass, Warning, TEXT("DoRollMove::IsCrouched == true"));
 		return;
 	}
 
 	// If StandToRollMontage Is Not Valid = return
 	if (IsValid(StandToRollMontage) == false)
 	{
-		UE_LOG(LogClass, Warning, TEXT("IsValid::StandToRollMontage, false"));
+		UE_LOG(LogClass, Warning, TEXT("DoRollMove::IsValid(StandToRollMontage) == false"));
 		return;
 	}
 
 	// If RunToRollMontage Is Not Valid = return
 	if (IsValid(RunToRollMontage) == false)
 	{
-		UE_LOG(LogClass, Warning, TEXT("IsValid::RunToRollMontage, false"));
+		UE_LOG(LogClass, Warning, TEXT("DoRollMove::IsValid(RunToRollMontage) == false"));
 		return;
 	}
 
@@ -198,7 +197,7 @@ void AFHProjectCharacter::Res_DoRollMove_Implementation()
 		// Check Montage Is Playing
 		//bIsMontagePlaying = GetMesh()->GetAnimInstance()->IsAnyMontagePlaying();
 
-		UE_LOG(LogClass, Warning, TEXT("PlayAnimMontage::StandToRollMontage"));
+		UE_LOG(LogClass, Warning, TEXT("DoRollMove::PlayAnimMontage - StandToRollMontage"));
 		PlayAnimMontage(StandToRollMontage);
 	}
 	else if (GetCharacterMovement()->GetMaxSpeed() > 500.0f)
@@ -206,9 +205,11 @@ void AFHProjectCharacter::Res_DoRollMove_Implementation()
 		// Check Montage Is Playing
 		//bIsMontagePlaying = GetMesh()->GetAnimInstance()->IsAnyMontagePlaying();
 
-		UE_LOG(LogClass, Warning, TEXT("PlayAnimMontage::RunToRollMontage"));
+		UE_LOG(LogClass, Warning, TEXT("DoRollMove::PlayAnimMontage - RunToRollMontage"));
 		PlayAnimMontage(RunToRollMontage);
 	}
+
+	UE_LOG(LogClass, Warning, TEXT("DoRollMove - End"));
 }
 
 
@@ -217,10 +218,12 @@ void AFHProjectCharacter::Req_SetMaxWalkSpeed_Implementation(float NewSpeed)
 	//Sprint and StopSprint Action Use This Function
 	//Default Value 500.f
 	//Walk = 500.0f, Sprint 750.0f
-	UE_LOG(LogClass, Warning, TEXT("SetMaxWalkSpeed"));
+	UE_LOG(LogClass, Warning, TEXT("SetMaxWalkSpeed - Start"));
 
 	// Set MaxWalkSpeed New Speed - Server
 	Res_SetMaxWalkSpeed(NewSpeed);
+
+	UE_LOG(LogClass, Warning, TEXT("SetMaxWalkSpeed - End"));
 }
 
 void AFHProjectCharacter::Res_SetMaxWalkSpeed_Implementation(float NewSpeed)
@@ -231,7 +234,7 @@ void AFHProjectCharacter::Res_SetMaxWalkSpeed_Implementation(float NewSpeed)
 
 void AFHProjectCharacter::Res_AttachToWeaponSocket_Implementation(AActor* Item)
 {
-	UE_LOG(LogClass, Warning, TEXT("Res_AttachToWeaponSocket"));
+	UE_LOG(LogClass, Warning, TEXT("Res_AttachToWeaponSocket - Start"));
 
 	// EquipWeapon is Target Item
 	EquipWeapon = Item;
@@ -239,7 +242,7 @@ void AFHProjectCharacter::Res_AttachToWeaponSocket_Implementation(AActor* Item)
 	// Check EquipWeapon Is Valid
 	if (IsValid(EquipWeapon) == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("IsValid::EquipWeapon"));
+		UE_LOG(LogClass, Warning, TEXT("Res_AttachToWeaponSocket::IsValid(EquipWeapon) == true"));
 	}
 
 	// Cast WeaponInterface - Item
@@ -248,32 +251,40 @@ void AFHProjectCharacter::Res_AttachToWeaponSocket_Implementation(AActor* Item)
 	// Cast WeaponInterface pointer is nullptr = return
 	if (WeaponInterfaceObj == nullptr)
 	{
+		UE_LOG(LogClass, Warning, TEXT("Res_AttachToWeaponSocket::WeaponInterfaceObj == nullptr"));
 		return;
 	}
 
 	// Item's Event_AttachToComponent, Attach Target Character is Self
 	WeaponInterfaceObj->Execute_Event_AttachToComponent(Item, this, WeaponSocketName);
+
+	UE_LOG(LogClass, Warning, TEXT("Res_AttachToWeaponSocket - End"));
 }
 
 void AFHProjectCharacter::Req_GetItem_Implementation()
 {
+	UE_LOG(LogClass, Warning, TEXT("Req_GetItem - Start"));
 	AActor* Weapon = FindWeapon();
 
 	if(Weapon == nullptr)
 	{
-		UE_LOG(LogClass, Warning, TEXT("nullptr::Weapon"));
+		UE_LOG(LogClass, Warning, TEXT("Req_GetItem::Weapon == nullptr"));
 		return;
 	}
 
 	Weapon->SetOwner(GetController());
 
 	Res_GetItem(Weapon);
+	UE_LOG(LogClass, Warning, TEXT("Req_GetItem - End"));
 }
 
 void AFHProjectCharacter::Res_GetItem_Implementation(AActor* Item)
 {
-	if (IsValid(EquipWeapon))
+	UE_LOG(LogClass, Warning, TEXT("Res_GetItem - Start"));
+
+	if (IsValid(EquipWeapon) == true)
 	{
+		UE_LOG(LogClass, Warning, TEXT("Res_GetItem::IsValid(EquipWeapon) == true"));
 		return;
 	}
 
@@ -282,10 +293,13 @@ void AFHProjectCharacter::Res_GetItem_Implementation(AActor* Item)
 	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(Item);
 	if (WeaponInterfaceObj == nullptr)
 	{
+		UE_LOG(LogClass, Warning, TEXT("Res_GetItem::WeaponInterfaceObj == nullptr"));
 		return;
 	}
 
 	WeaponInterfaceObj->Execute_Event_AttachToComponent(Item, this, WeaponSocketName);
+
+	UE_LOG(LogClass, Warning, TEXT("Res_GetItem - End"));
 }
 
 void AFHProjectCharacter::Req_DropItem_Implementation()
@@ -297,7 +311,7 @@ void AFHProjectCharacter::Req_DropItem_Implementation()
 void AFHProjectCharacter::Res_DropItem_Implementation()
 {
 	//Client
-	UE_LOG(LogClass, Warning, TEXT("Res_DropItem"));
+	UE_LOG(LogClass, Warning, TEXT("Res_DropItem - Start"));
 
 	// Cast WeaponInterface - EquipWeapon
 	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(EquipWeapon);
@@ -305,6 +319,7 @@ void AFHProjectCharacter::Res_DropItem_Implementation()
 	// Cast WeaponInterface pointer is nullptr = return
 	if (WeaponInterfaceObj == nullptr)
 	{
+		UE_LOG(LogClass, Warning, TEXT("Res_DropItem::WeaponInterfaceObj == nullptr"));
 		return;
 	}
 
@@ -313,6 +328,8 @@ void AFHProjectCharacter::Res_DropItem_Implementation()
 
 	// Set EquipWeapon null
 	EquipWeapon = nullptr;
+
+	UE_LOG(LogClass, Warning, TEXT("Res_DropItem - End"));
 }
 
 void AFHProjectCharacter::Req_LeftClickAttack_Implementation(bool IsPressed)
@@ -323,7 +340,7 @@ void AFHProjectCharacter::Req_LeftClickAttack_Implementation(bool IsPressed)
 
 void AFHProjectCharacter::Res_LeftClickAttack_Implementation(bool IsPressed)
 {
-	UE_LOG(LogClass, Warning, TEXT("Res_LeftClickAttack"));
+	UE_LOG(LogClass, Warning, TEXT("Res_LeftClickAttack - Start"));
 
 	// Cast WeaponInterface - EquipWeapon
 	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(EquipWeapon);
@@ -331,11 +348,13 @@ void AFHProjectCharacter::Res_LeftClickAttack_Implementation(bool IsPressed)
 	// Cast WeaponInterface pointer is nullptr = return
 	if (WeaponInterfaceObj == nullptr)
 	{
+		UE_LOG(LogClass, Warning, TEXT("Res_LeftClickAttack::WeaponInterfaceObj == nullptr"));
 		return;
 	}
 
 	WeaponInterfaceObj->Execute_Event_LeftClickAttack(EquipWeapon, IsPressed);
 
+	UE_LOG(LogClass, Warning, TEXT("Res_LeftClickAttack - End"));
 }
 
 void AFHProjectCharacter::Req_RightClickAttack_Implementation(bool IsPressed)
@@ -346,7 +365,7 @@ void AFHProjectCharacter::Req_RightClickAttack_Implementation(bool IsPressed)
 
 void AFHProjectCharacter::Res_RightClickAttack_Implementation(bool IsPressed)
 {
-	UE_LOG(LogClass, Warning, TEXT("Res_RightClickAttack"));
+	UE_LOG(LogClass, Warning, TEXT("Res_RightClickAttack - Start"));
 
 	// Cast WeaponInterface - EquipWeapon
 	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(EquipWeapon);
@@ -354,26 +373,29 @@ void AFHProjectCharacter::Res_RightClickAttack_Implementation(bool IsPressed)
 	// Cast WeaponInterface pointer is nullptr = return
 	if (WeaponInterfaceObj == nullptr)
 	{
+		UE_LOG(LogClass, Warning, TEXT("Res_RightClickAttack::WeaponInterfaceObj == nullptr"));
 		return;
 	}
 
 	WeaponInterfaceObj->Execute_Event_RightClickAttack(EquipWeapon, IsPressed);
+
+	UE_LOG(LogClass, Warning, TEXT("Res_RightClickAttack - End"));
 }
 
 void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AActor* Item)
 {
-	UE_LOG(LogClass, Warning, TEXT("EventGetItem"));
+	UE_LOG(LogClass, Warning, TEXT("EventGetItem - Start"));
 	// WeaponInterface Event Switch
 	switch (eWeaponType)
 	{
 	case EItemType::TestWeapon:
 	{
-		UE_LOG(LogClass, Warning, TEXT("EItemType::TestWeapon"));
+		UE_LOG(LogClass, Warning, TEXT("EventGetItem::EItemType - TestWeapon"));
 
 		// Check Item is Valid
 		if (IsValid(Item) == false)
 		{
-			UE_LOG(LogClass, Warning, TEXT("IsValid::Item == false"));
+			UE_LOG(LogClass, Warning, TEXT("EventGetItem::IsValid::Item == false"));
 
 			return;
 		}
@@ -382,14 +404,14 @@ void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AA
 		ABaseWeapon* BaseWeaponObj = Cast<ABaseWeapon>(Item);
 		if (BaseWeaponObj->GetOwnerCharacter() != nullptr)
 		{
-			UE_LOG(LogClass, Warning, TEXT("nullptr::Target Item has already has Owner Character"));
+			UE_LOG(LogClass, Warning, TEXT("EventGetItem::BaseWeaponObj->GetOwnerCharacter() != nullptr"));
 			return;
 		}
 
 		// Check EquipWeapon null
 		if (EquipWeapon != nullptr)
 		{
-			UE_LOG(LogClass, Warning, TEXT("nullptr::Character has EquipWeapon"));
+			UE_LOG(LogClass, Warning, TEXT("EventGetItem::EquipWeapon != nullptr"));
 
 			return;
 		}
@@ -401,6 +423,8 @@ void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AA
 	}
 	
 	}
+
+	UE_LOG(LogClass, Warning, TEXT("EventGetItem - End"));
 }
 
 float AFHProjectCharacter::GetCameraTargetArmLength()
@@ -410,7 +434,7 @@ float AFHProjectCharacter::GetCameraTargetArmLength()
 
 AActor* AFHProjectCharacter::FindWeapon()
 {
-	UE_LOG(LogClass, Warning, TEXT("FindWeapon"));
+	UE_LOG(LogClass, Warning, TEXT("FindWeapon - Start"));
 	TArray<AActor*> ActorsArray;
 	GetCapsuleComponent()->GetOverlappingActors(ActorsArray, ABaseWeapon::StaticClass());
 
@@ -423,12 +447,15 @@ AActor* AFHProjectCharacter::FindWeapon()
 
 		if (MostShortDistance < DistanceToCharacter)
 		{
+			UE_LOG(LogClass, Warning, TEXT("FindWeapon::MostShortDistance < DistanceToCharacter"));
 			continue;
 		}
 
 		MostShortDistance = DistanceToCharacter;
 		Weapon = TargetWeapon;
 	}
+
+	UE_LOG(LogClass, Warning, TEXT("FindWeapon - End"));
 
 	return Weapon;
 }
@@ -649,7 +676,7 @@ void AFHProjectCharacter::RightClickInput(const FInputActionValue& Value)
 	//Check Character has EquipWeapon
 	if (EquipWeapon == nullptr)
 	{
-		UE_LOG(LogClass, Warning, TEXT("nullptr::Character EquipWeapon is null"));
+		UE_LOG(LogClass, Warning, TEXT("RightClickInput::EquipWeapon == nullptr"));
 
 		return;
 	}
@@ -667,7 +694,7 @@ void AFHProjectCharacter::StopRightClickInput(const FInputActionValue& Value)
 	//Check Character has EquipWeapon
 	if (EquipWeapon == nullptr)
 	{
-		UE_LOG(LogClass, Warning, TEXT("nullptr::Character EquipWeapon is null"));
+		UE_LOG(LogClass, Warning, TEXT("StopRightClickInput::EquipWeapon == nullptr"));
 
 		return;
 	}
@@ -685,7 +712,7 @@ void AFHProjectCharacter::LeftClickInput(const FInputActionValue& Value)
 	//Check Character has EquipWeapon
 	if (EquipWeapon == nullptr)
 	{
-		UE_LOG(LogClass, Warning, TEXT("nullptr::Character EquipWeapon is null"));
+		UE_LOG(LogClass, Warning, TEXT("LeftClickInput::EquipWeapon == nullptr"));
 
 		return;
 	}
@@ -703,7 +730,7 @@ void AFHProjectCharacter::StopLeftClickInput(const FInputActionValue& Value)
 	//Check Character has EquipWeapon
 	if (EquipWeapon == nullptr)
 	{
-		UE_LOG(LogClass, Warning, TEXT("nullptr::Character EquipWeapon is null"));
+		UE_LOG(LogClass, Warning, TEXT("StopLeftClickInput::EquipWeapon == nullptr"));
 
 		return;
 	}
