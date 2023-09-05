@@ -153,7 +153,7 @@ public:
 	int32 GetLeftClickCount() { return LeftClickCount; };
 
 	//Add LeftClickCount
-	void AddLeftClickCount() { LeftClickCount += 1; };
+	void AddLeftClickCount();
 
 	//Initialize LeftClickCount
 	//void InitializeLeftClickCount() { LeftClickCount = 0; };
@@ -195,7 +195,12 @@ public:
 	float GetCalculatedRightClickDamage();
 
 	//Play AnimMontage, Target is Weapon's OwnerCharacter
-	void PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage);
+	UFUNCTION(Server, Reliable)
+	void Req_PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Res_PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage);
+
 
 	void RangeAttack();
 
@@ -206,6 +211,9 @@ public:
 	void Req_ApplyDamageToTargetActor(FVector StartLocation, FVector EndLocation, float Damage);
 
 	//Spawn Emitter At Location
+	UFUNCTION(Server, Reliable)
+	void Req_SpawnEmitterAtTargetLocation(FVector TargetLocation, FRotator TargetRotation);
+
 	UFUNCTION(NetMulticast, Reliable)
 	void Res_SpawnEmitterAtTargetLocation(FVector TargetLocation, FRotator TargetRotation);
 
@@ -220,9 +228,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemType")
 	EItemType eWeaponType;
 
+	//----------[ Montage ]----------
 	// Use When Attack - Left Click
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
 	UAnimMontage* AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	UAnimMontage* Combo1_AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	UAnimMontage* Combo2_AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	UAnimMontage* Combo3_AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
+	UAnimMontage* Combo4_AttackMontage;
 
 	// Use When Special Attack - Right Click
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")

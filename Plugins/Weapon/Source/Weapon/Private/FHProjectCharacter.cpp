@@ -357,6 +357,25 @@ void AFHProjectCharacter::Res_LeftClickAttack_Implementation(bool IsPressed)
 	UE_LOG(LogClass, Warning, TEXT("Res_LeftClickAttack - End"));
 }
 
+void AFHProjectCharacter::LeftClickAttack(bool IsPressed)
+{
+	UE_LOG(LogClass, Warning, TEXT("LeftClickAttack - Start"));
+
+	// Cast WeaponInterface - EquipWeapon
+	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(EquipWeapon);
+
+	// Cast WeaponInterface pointer is nullptr = return
+	if (WeaponInterfaceObj == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("LeftClickAttack::WeaponInterfaceObj == nullptr"));
+		return;
+	}
+
+	WeaponInterfaceObj->Execute_Event_LeftClickAttack(EquipWeapon, IsPressed);
+
+	UE_LOG(LogClass, Warning, TEXT("LeftClickAttack - End"));
+}
+
 void AFHProjectCharacter::Req_RightClickAttack_Implementation(bool IsPressed)
 {
 	//Client
@@ -380,6 +399,25 @@ void AFHProjectCharacter::Res_RightClickAttack_Implementation(bool IsPressed)
 	WeaponInterfaceObj->Execute_Event_RightClickAttack(EquipWeapon, IsPressed);
 
 	UE_LOG(LogClass, Warning, TEXT("Res_RightClickAttack - End"));
+}
+
+void AFHProjectCharacter::RightClickAttack(bool IsPressed)
+{
+	UE_LOG(LogClass, Warning, TEXT("RightClickAttack - Start"));
+
+	// Cast WeaponInterface - EquipWeapon
+	IWeaponInterface* WeaponInterfaceObj = Cast<IWeaponInterface>(EquipWeapon);
+
+	// Cast WeaponInterface pointer is nullptr = return
+	if (WeaponInterfaceObj == nullptr)
+	{
+		UE_LOG(LogClass, Warning, TEXT("RightClickAttack::WeaponInterfaceObj == nullptr"));
+		return;
+	}
+
+	WeaponInterfaceObj->Execute_Event_RightClickAttack(EquipWeapon, IsPressed);
+
+	UE_LOG(LogClass, Warning, TEXT("RightClickAttack - End"));
 }
 
 void AFHProjectCharacter::Event_GetItem_Implementation(EItemType eWeaponType, AActor* Item)
@@ -683,7 +721,7 @@ void AFHProjectCharacter::RightClickInput(const FInputActionValue& Value)
 
 	//Server
 	//IsPressed is true
-	Req_RightClickAttack(true);
+	RightClickAttack(true);
 }
 
 void AFHProjectCharacter::StopRightClickInput(const FInputActionValue& Value)
@@ -701,7 +739,7 @@ void AFHProjectCharacter::StopRightClickInput(const FInputActionValue& Value)
 
 	//Server
 	//IsPressed is false
-	Req_RightClickAttack(false);
+	RightClickAttack(false);
 }
 
 void AFHProjectCharacter::LeftClickInput(const FInputActionValue& Value)
@@ -719,7 +757,7 @@ void AFHProjectCharacter::LeftClickInput(const FInputActionValue& Value)
 
 	//Server
 	//IsPressed is true
-	Req_LeftClickAttack(true);
+	LeftClickAttack(true);
 }
 
 void AFHProjectCharacter::StopLeftClickInput(const FInputActionValue& Value)
@@ -739,7 +777,7 @@ void AFHProjectCharacter::StopLeftClickInput(const FInputActionValue& Value)
 
 	//Server
 	//IsPressed is false
-	Req_LeftClickAttack(false);
+	LeftClickAttack(false);
 }
 
 void AFHProjectCharacter::NumberKey1Input(const FInputActionValue& Value)
@@ -778,5 +816,4 @@ void AFHProjectCharacter::NumberKey6Input(const FInputActionValue& Value)
 	Req_Test(6);
 
 }
-
 

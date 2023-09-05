@@ -225,6 +225,8 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Res_LeftClickAttack(bool IsPressed);
 
+	void LeftClickAttack(bool IsPressed);
+
 
 	//Right Click Attack Action
 	UFUNCTION(Server, Reliable)
@@ -232,6 +234,8 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Res_RightClickAttack(bool IsPressed);
+
+	void RightClickAttack(bool IsPressed);
 
 
 public:
