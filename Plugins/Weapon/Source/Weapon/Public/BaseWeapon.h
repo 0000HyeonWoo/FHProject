@@ -210,6 +210,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Req_ApplyDamageToTargetActor(FVector StartLocation, FVector EndLocation, float Damage);
 
+
 	//Spawn Emitter At Location
 	UFUNCTION(Server, Reliable)
 	void Req_SpawnEmitterAtTargetLocation(FVector TargetLocation, FRotator TargetRotation);

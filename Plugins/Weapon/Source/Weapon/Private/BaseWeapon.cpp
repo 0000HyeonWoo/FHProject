@@ -565,7 +565,7 @@ void ABaseWeapon::CloseAttack()
 
 	//Spawn Target Emitter by Weapon Type
 	//If not Range Weapon, Spawn Emitter at AttackEffectSocket's Location, Rotation
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, StaticMesh->GetSocketLocation(AttackEffectSocketName), StaticMesh->GetSocketRotation(AttackEffectSocketName), AttackEffectScale);
+	//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, StaticMesh->GetSocketLocation(AttackEffectSocketName), StaticMesh->GetSocketRotation(AttackEffectSocketName), AttackEffectScale);
 	//Req_SpawnEmitterAtTargetLocation(StaticMesh->GetSocketLocation(AttackEffectSocketName), StaticMesh->GetSocketRotation(AttackEffectSocketName));
 
 	//Active Event by Left Click Value
@@ -707,6 +707,9 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 			FColor::Green,
 			5.f
 		);
+
+		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, EndLocation, StaticMesh->GetRelativeRotation(), AttackEffectScale);
+
 
 	}
 
