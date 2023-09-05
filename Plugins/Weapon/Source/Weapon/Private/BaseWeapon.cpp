@@ -300,8 +300,32 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack - Start"));
 	//Click Event
 
+	//Check Weapon's OwnerCharacter is First Index Player
+	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
+	{
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetPlayerCharacter != OwnerCharacter"));
+		return;
+	}
+
+	if (bIsRangeWeapon == true)
+	{
+		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon::bIsRangeWeapon true"));
+
+		RangeAttack();
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon::bIsRangeWeapon false"));
+
+		CloseAttack();
+	}
+
+	//Spawn Target Sound AttackSoundSocket's Location
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AttackSound, StaticMesh->GetSocketLocation(AttackSoundSocketName));
+
+
 	//Set Attack Start, End Location Value by Weapon Attack Type
-	FVector AttackStartLocation;
+	/*FVector AttackStartLocation;
 	FVector AttackEndLocation;
 
 	if (bIsRangeWeapon == true)
@@ -362,11 +386,11 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 
 	//----------[ UNetDirver Error Start ]----------
 	//Check Has Authority
-	/*if (HasAuthority() == false)
+	if (HasAuthority() == false)
 	{
 		UE_LOG(LogClass, Warning, TEXT("HasAuthority == false"));
 		return;
-	}*/
+	}
 
 	//Check Weapon's OwnerCharacter is First Index Player
 	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
@@ -394,19 +418,21 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
 	
 		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::Initialize LeftClickCount :: %d"), LeftClickCount);
-	}
+	}*/
 
 	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack - End"));
 }
 
 void ABaseWeapon::Req_InitializeLeftClickCount_Implementation()
 {
+	//Server
 	UE_LOG(LogClass, Warning, TEXT("Req_InitializeLeftClickCount"));
 	Res_InitializeLeftClickCount();
 }
 
 void ABaseWeapon::Res_InitializeLeftClickCount_Implementation()
 {
+	//Client
 	UE_LOG(LogClass, Warning, TEXT("Res_InitializeLeftClickCount"));
 	LeftClickCount = 0;
 }
@@ -454,6 +480,97 @@ void ABaseWeapon::PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage)
 	OwnerCharacter->PlayAnimMontage(TargetAttackMontage);
 
 	UE_LOG(LogClass, Warning, TEXT("PlayAttackAnimMontage - End"));
+}
+
+void ABaseWeapon::RangeAttack()
+{
+	UE_LOG(LogClass, Warning, TEXT("RangeAttack - Start"));
+
+	FVector AttackStartLocation;
+	FVector AttackEndLocation;
+
+	APlayerController* FirstPlayerController = GetWorld()->GetFirstPlayerController();
+
+	//Get Player's Camera Location
+	FVector CameraLocation;
+	CameraLocation = FirstPlayerController->PlayerCameraManager->GetCameraLocation();
+
+	//UE_LOG(LogClass, Warning, TEXT("CameraLocation %s"), *CameraLocation.ToString());
+
+	//Get Player's Camera Forward Vector
+	FVector CameraForwardVector;
+	CameraForwardVector = FirstPlayerController->PlayerCameraManager->GetActorForwardVector();
+
+	//Get Distance to Player's Camera and StaticMesh's Attack Start Socket Location
+	float Distance;
+	Distance = FVector::Distance(CameraLocation, StaticMesh->GetSocketLocation(AttackStartSocketName));
+
+	//Attack Start Location is
+	AttackStartLocation = CameraLocation + (CameraForwardVector * Distance);
+
+	//Attack End Location is
+	AttackEndLocation = AttackStartLocation + (CameraForwardVector * AttackRange);
+
+	//----------[ End Calculate Attack Start, End Location ]----------
+
+	//Active Event by Left Click Value
+	//Use Start, End Location is Same, Difference is only Damage
+	if (GetIsLeftClick() == true)
+	{
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetIsLeftClick == true"));
+
+		//Left Click Damage Event Use Default Damage
+		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetClickAttackDamage());
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetIsLeftClick == false"));
+
+		//Right Click Damage Event Use Calculated Damage
+		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
+
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::Initialize LeftClickCount :: %d"), LeftClickCount);
+	}
+
+	UE_LOG(LogClass, Warning, TEXT("RangeAttack - End"));
+}
+
+void ABaseWeapon::CloseAttack()
+{
+	UE_LOG(LogClass, Warning, TEXT("CloseAttack - Start"));
+
+	FVector AttackStartLocation;
+	FVector AttackEndLocation;
+
+	//Not Range Weapon
+	//Set Start, End Point Location Vector by Socket Location, Target is Weapon Mesh's Socket
+	AttackStartLocation = StaticMesh->GetSocketLocation(AttackStartSocketName);
+	AttackEndLocation = StaticMesh->GetSocketLocation(AttackEndSocketName);
+
+	//Spawn Target Emitter by Weapon Type
+	//If not Range Weapon, Spawn Emitter at AttackEffectSocket's Location, Rotation
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, StaticMesh->GetSocketLocation(AttackEffectSocketName), StaticMesh->GetSocketRotation(AttackEffectSocketName), AttackEffectScale);
+
+	//Active Event by Left Click Value
+	//Use Start, End Location is Same, Difference is only Damage
+	if (GetIsLeftClick() == true)
+	{
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetIsLeftClick == true"));
+
+		//Left Click Damage Event Use Default Damage
+		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetClickAttackDamage());
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetIsLeftClick == false"));
+
+		//Right Click Damage Event Use Calculated Damage
+		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
+
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::Initialize LeftClickCount :: %d"), LeftClickCount);
+	}
+
+	UE_LOG(LogClass, Warning, TEXT("CloseAttack - End"));
 }
 
 void ABaseWeapon::Res_SpawnEmitterAtTargetLocation_Implementation(FVector TargetLocation, FRotator TargetRotation)

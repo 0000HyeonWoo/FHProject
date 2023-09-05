@@ -197,6 +197,10 @@ public:
 	//Play AnimMontage, Target is Weapon's OwnerCharacter
 	void PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage);
 
+	void RangeAttack();
+
+	void CloseAttack();
+
 	//Apply Damage to Actor Class
 	UFUNCTION(Server, Reliable)
 	void Req_ApplyDamageToTargetActor(FVector StartLocation, FVector EndLocation, float Damage);
