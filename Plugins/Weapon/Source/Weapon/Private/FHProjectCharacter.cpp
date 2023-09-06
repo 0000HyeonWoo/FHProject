@@ -137,11 +137,11 @@ void AFHProjectCharacter::Res_Test_Implementation(int32 Value)
 
 	if (Value == NULL)
 	{
-		UE_LOG(LogClass, Warning, TEXT("Test Function::Value Is NULL"));
+		UE_LOG(LogClass, Warning, TEXT("Test Function::Value == NULL"));
 		Value = 0;
 	}
 
-	UE_LOG(LogClass, Warning, TEXT("Test Function::Print Test :: %d"), Value);
+	UE_LOG(LogClass, Warning, TEXT("Test Function::Print Test ( %d )"), Value);
 	UE_LOG(LogClass, Warning, TEXT("Test Function - End"));
 }
 //----------[ Test function End ]----------
@@ -218,12 +218,10 @@ void AFHProjectCharacter::Req_SetMaxWalkSpeed_Implementation(float NewSpeed)
 	//Sprint and StopSprint Action Use This Function
 	//Default Value 500.f
 	//Walk = 500.0f, Sprint 750.0f
-	UE_LOG(LogClass, Warning, TEXT("SetMaxWalkSpeed - Start"));
+	UE_LOG(LogClass, Warning, TEXT("SetMaxWalkSpeed"));
 
 	// Set MaxWalkSpeed New Speed - Server
 	Res_SetMaxWalkSpeed(NewSpeed);
-
-	UE_LOG(LogClass, Warning, TEXT("SetMaxWalkSpeed - End"));
 }
 
 void AFHProjectCharacter::Res_SetMaxWalkSpeed_Implementation(float NewSpeed)

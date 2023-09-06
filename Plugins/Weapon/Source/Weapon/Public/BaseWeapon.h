@@ -166,7 +166,7 @@ public:
 	void AddLeftClickCount();
 
 	//Initialize LeftClickCount
-	//void InitializeLeftClickCount() { LeftClickCount = 0; };
+	void InitializeLeftClickCount() { LeftClickCount = 0; };
 
 	UFUNCTION(Server, Reliable)
 	void Req_InitializeLeftClickCount();

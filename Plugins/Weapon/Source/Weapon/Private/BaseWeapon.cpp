@@ -153,7 +153,7 @@ void ABaseWeapon::MeshBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	// If Actor Destroyed, Character's AttachToComponent function doesn't work
 	//Destroy();
 
-	UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap::Character Name :: %s"), *OtherActor->GetName());
+	UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap::Character Name ( %s )"), *OtherActor->GetName());
 	UE_LOG(LogClass, Warning, TEXT("MeshBeginOverlap - End"));
 }
 
@@ -210,7 +210,7 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 
 	if (IsPressed == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::IsPressed true"));
+		UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::IsPressed == true"));
 
 		//Check Weapon has OwnerCharacter
 		if (OwnerCharacter == nullptr)
@@ -235,7 +235,7 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 
 		//Add Left Click Count
 		AddLeftClickCount();
-		UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::LeftClickCount :: %d"), LeftClickCount);
+		UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::LeftClickCount ( %d )"), GetLeftClickCount());
 
 		Req_PlayAttackAnimMontage(AttackMontage);
 
@@ -262,21 +262,21 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 		//Check Weapon has OwnerCharacter
 		if (OwnerCharacter == nullptr)
 		{
-			UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::OwnerCharacter::nullptr"));
+			UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::OwnerCharacter == nullptr"));
 			return;
 		}
 
 		//Check Any Montage Playing
 		if (OwnerCharacter->GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() == true)
 		{
-			UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::IsAnyMontagePlaying::true"));
+			UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::IsAnyMontagePlaying == true"));
 			return;
 		}
 
 		// If SpecialAttackMontage Is Not Valid = return
 		if (IsValid(SpecialAttackMontage) == false)
 		{
-			UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::IsValid::SpecialAttackMontage, false"));
+			UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::IsValid::SpecialAttackMontage == false"));
 			return;
 		}
 
@@ -286,13 +286,14 @@ void ABaseWeapon::Event_RightClickAttack_Implementation(bool IsPressed)
 		//UE_LOG(LogClass, Warning, TEXT("CalculatedRightClickDamage :: %d"), RightClickDamage);
 
 		Req_PlayAttackAnimMontage(SpecialAttackMontage);
+		InitializeLeftClickCount();
 
 		//Left Click is flase
 		SetIsLeftClick(false);
 	}
 	else if (IsPressed == false)
 	{
-		UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::IsPressed false"));
+		UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack::IsPressed == false"));
 	}
 
 	UE_LOG(LogClass, Warning, TEXT("Event_RightClickAttack - End"));
@@ -305,13 +306,13 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 
 	if (bIsRangeWeapon == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon::bIsRangeWeapon true"));
+		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon::bIsRangeWeapon == true"));
 
 		RangeAttack();
 	}
 	else
 	{
-		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon::bIsRangeWeapon false"));
+		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon::bIsRangeWeapon == false"));
 
 		CloseAttack();
 	}
@@ -426,9 +427,11 @@ void ABaseWeapon::Res_InitializeLeftClickCount_Implementation()
 {
 	//Client
 	UE_LOG(LogClass, Warning, TEXT("Res_InitializeLeftClickCount"));
+
+
 	LeftClickCount = 0;
 
-	UE_LOG(LogClass, Warning, TEXT("Res_InitializeLeftClickCount::LeftClickCount::%d"), GetLeftClickCount());
+	UE_LOG(LogClass, Warning, TEXT("Res_InitializeLeftClickCount::LeftClickCount ( %d )"), GetLeftClickCount());
 }
 
 void ABaseWeapon::AddLeftClickCount()
@@ -439,12 +442,12 @@ void ABaseWeapon::AddLeftClickCount()
 
 	if (LeftClickCount > GetMaxLeftClickCount())
 	{
-		UE_LOG(LogClass, Warning, TEXT("AddLeftClickCount::LeftClickCount > MaxLeftClickCount (%d)"), GetMaxLeftClickCount());
+		UE_LOG(LogClass, Warning, TEXT("AddLeftClickCount::LeftClickCount > MaxLeftClickCount ( %d )"), GetMaxLeftClickCount());
 
 		Req_InitializeLeftClickCount();
 	}
 
-	UE_LOG(LogClass, Warning, TEXT("AddLeftClickCount::LeftClickCount::%d"), GetLeftClickCount());
+	UE_LOG(LogClass, Warning, TEXT("AddLeftClickCount::LeftClickCount ( %d )"), GetLeftClickCount());
 }
 
 float ABaseWeapon::GetCalculatedRightClickDamage()
@@ -462,20 +465,20 @@ float ABaseWeapon::GetCalculatedRightClickDamage()
 
 	//RightClickDamage increase by LeftClickCount Value
 	//Each Left Click increase Damage Value 10%
-	UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage::LeftClickCount :: %d"), GetLeftClickCount());
+	UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage::LeftClickCount ( %d )"), GetLeftClickCount());
 	RightClickDamage = GetClickAttackDamage() + (GetClickAttackDamage() * (GetLeftClickCount() * 0.1f));
 
 	//Check Calculated Damage Value
 	if (RightClickDamage > GetMaxRightClickDamage())
 	{
 		UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage::RightClickDamage > GetMaxRightClickDamage"));
-		UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage::RightClickDamage Value Before Change:: %f"), RightClickDamage);
+		UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage::RightClickDamage Value Before Change ( %f )"), RightClickDamage);
 		//If Calculated Value bigger than Max Value, Set Calculated Value to Max Value
 		RightClickDamage = GetMaxRightClickDamage();
 	}
 	
 	//Check Calculated Value
-	UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage::RightClickDamage :: %f"), RightClickDamage);
+	UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage::RightClickDamage ( %f )"), RightClickDamage);
 
 	UE_LOG(LogClass, Warning, TEXT("GetCalculatedRightClickDamage - End"));
 
@@ -532,7 +535,7 @@ void ABaseWeapon::RangeAttack()
 	//Check Weapon's OwnerCharacter is First Index Player
 	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
 	{
-		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetPlayerCharacter != OwnerCharacter"));
+		UE_LOG(LogClass, Warning, TEXT("Event_RangeAttack::GetPlayerCharacter != OwnerCharacter"));
 		return;
 	}
 
@@ -540,14 +543,14 @@ void ABaseWeapon::RangeAttack()
 	//Use Start, End Location is Same, Difference is only Damage
 	if (GetIsLeftClick() == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetIsLeftClick == true"));
+		UE_LOG(LogClass, Warning, TEXT("Event_RangeAttack::GetIsLeftClick == true"));
 
 		//Left Click Damage Event Use Default Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetClickAttackDamage());
 	}
 	else
 	{
-		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetIsLeftClick == false"));
+		UE_LOG(LogClass, Warning, TEXT("Event_RangeAttack::GetIsLeftClick == false"));
 
 		//Right Click Damage Event Use Calculated Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
@@ -575,7 +578,7 @@ void ABaseWeapon::CloseAttack()
 	//Check Weapon's OwnerCharacter is First Index Player
 	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
 	{
-		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetPlayerCharacter != OwnerCharacter"));
+		UE_LOG(LogClass, Warning, TEXT("Event_CloseAttack::GetPlayerCharacter != OwnerCharacter"));
 		return;
 	}
 
@@ -583,19 +586,19 @@ void ABaseWeapon::CloseAttack()
 	//Use Start, End Location is Same, Difference is only Damage
 	if (GetIsLeftClick() == true)
 	{
-		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetIsLeftClick == true"));
+		UE_LOG(LogClass, Warning, TEXT("Event_CloseAttack::GetIsLeftClick == true"));
 
 		//Left Click Damage Event Use Default Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetClickAttackDamage());
 	}
 	else
 	{
-		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetIsLeftClick == false"));
+		UE_LOG(LogClass, Warning, TEXT("Event_CloseAttack::GetIsLeftClick == false"));
 
 		//Right Click Damage Event Use Calculated Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
 
-		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::Initialize LeftClickCount :: %d"), LeftClickCount);
+		UE_LOG(LogClass, Warning, TEXT("Event_CloseAttack::Initialize LeftClickCount ( %d )"), LeftClickCount);
 	}
 
 	UE_LOG(LogClass, Warning, TEXT("CloseAttack - End"));
@@ -630,7 +633,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor - Start"));
 
 	//Check Damage Value
-	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::Apply Damage :: %f"), Damage);
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::Apply Damage ( %f )"), Damage);
 
 	//Trace Result Value
 	bool bIsHit;
@@ -712,15 +715,16 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 		);
 	}
 
+
 	//Check Click was Right Click
-	if (GetIsLeftClick() == false)
+	/*if (GetIsLeftClick() == false)
 	{
 		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::GetIsLeftClick == false"));
 
 		//Initialize LeftClickCount 0;
 		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::InitializeLeftClickCount"));
 		Req_InitializeLeftClickCount();
-	}
+	}*/
 
 	//If Trace(Attack) can't hit Anything, return
 	/*if (bIsHit == false)
@@ -733,6 +737,14 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 
 		return;
 	}*/
+
+
+	if (bIsHit == false)
+	{
+		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::bIsHit == false"));
+		return;
+	}
+
 
 	//Get Hit Actor
 	AActor* HitTargetObj = Cast<AActor>(AttackHitResult.GetActor());
@@ -748,7 +760,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 	Res_SpawnSoundAtTargetLocation(FVector(0, 0, 0));
 
 	//Check Hit Actor's Name
-	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::Hit Actor :: %s"), *FString(HitTargetObj->GetName()));
+	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::Hit Actor ( %s )"), *FString(HitTargetObj->GetName()));
 
 	//Apply Damage to Hit Actor, This function Active Target's TakeDamage
 	UGameplayStatics::ApplyDamage(HitTargetObj, Damage, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
