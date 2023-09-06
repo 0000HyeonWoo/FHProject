@@ -83,6 +83,9 @@ protected:
 	UPROPERTY(Replicated)
 	int32 LeftClickCount;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Count Setting")
+	int32 MaxLeftClickCount;
+
 	//Attack Effect Scale Value
 	FVector AttackEffectScale;
 
@@ -150,7 +153,14 @@ public:
 
 	//----------[ Left Click ]----------
 	//Return LeftClickCount
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Data")
 	int32 GetLeftClickCount() { return LeftClickCount; };
+
+	//Return MaxLeftClickCount
+	int32 GetMaxLeftClickCount() { return MaxLeftClickCount; };
+
+	//Set MaxLeftClickCount
+	void SetMaxLeftClickCount(int32 NewMaxLeftClickCount) { MaxLeftClickCount = NewMaxLeftClickCount; };
 
 	//Add LeftClickCount
 	void AddLeftClickCount();
@@ -202,9 +212,11 @@ public:
 	void Res_PlayAttackAnimMontage(UAnimMontage* TargetAttackMontage);
 
 
+	//Active Attack Event by Weapon Type
 	void RangeAttack();
 
 	void CloseAttack();
+
 
 	//Apply Damage to Actor Class
 	UFUNCTION(Server, Reliable)
@@ -218,6 +230,10 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Res_SpawnEmitterAtTargetLocation(FVector TargetLocation, FRotator TargetRotation);
 
+
+	//Spawn Sound At Location, Default Location Target is Weapon's Sound Socket
+	UFUNCTION(NetMulticast, Reliable)
+	void Res_SpawnSoundAtTargetLocation(FVector TargetLocation);
 
 
 public:

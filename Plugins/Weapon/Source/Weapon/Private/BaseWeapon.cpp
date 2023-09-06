@@ -35,6 +35,9 @@ ABaseWeapon::ABaseWeapon()
 
 	//Initialize LeftClickCount, int Type
 	LeftClickCount = 0;
+
+	MaxLeftClickCount = 0;
+	SetMaxLeftClickCount(4);
 	
 	//Initialize ClickAttackDamage, int Type
 	ClickAttackDamage = 0;
@@ -424,6 +427,8 @@ void ABaseWeapon::Res_InitializeLeftClickCount_Implementation()
 	//Client
 	UE_LOG(LogClass, Warning, TEXT("Res_InitializeLeftClickCount"));
 	LeftClickCount = 0;
+
+	UE_LOG(LogClass, Warning, TEXT("Res_InitializeLeftClickCount::LeftClickCount::%d"), GetLeftClickCount());
 }
 
 void ABaseWeapon::AddLeftClickCount()
@@ -432,12 +437,14 @@ void ABaseWeapon::AddLeftClickCount()
 
 	LeftClickCount += 1;
 
-	if (LeftClickCount > 4)
+	if (LeftClickCount > GetMaxLeftClickCount())
 	{
-		UE_LOG(LogClass, Warning, TEXT("AddLeftClickCount::LeftClickCount > 4"));
+		UE_LOG(LogClass, Warning, TEXT("AddLeftClickCount::LeftClickCount > MaxLeftClickCount (%d)"), GetMaxLeftClickCount());
 
 		Req_InitializeLeftClickCount();
 	}
+
+	UE_LOG(LogClass, Warning, TEXT("AddLeftClickCount::LeftClickCount::%d"), GetLeftClickCount());
 }
 
 float ABaseWeapon::GetCalculatedRightClickDamage()
@@ -544,10 +551,7 @@ void ABaseWeapon::RangeAttack()
 
 		//Right Click Damage Event Use Calculated Damage
 		Req_ApplyDamageToTargetActor(AttackStartLocation, AttackEndLocation, GetCalculatedRightClickDamage());
-
-		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::Initialize LeftClickCount :: %d"), LeftClickCount);
 	}
-
 	UE_LOG(LogClass, Warning, TEXT("RangeAttack - End"));
 }
 
@@ -597,11 +601,17 @@ void ABaseWeapon::CloseAttack()
 	UE_LOG(LogClass, Warning, TEXT("CloseAttack - End"));
 }
 
+void ABaseWeapon::Res_SpawnSoundAtTargetLocation_Implementation(FVector TargetLocation)
+{
+	UE_LOG(LogClass, Warning, TEXT("Res_SpawnSoundAtTargetLocation"));
+
+	//Spawn Target Sound AttackSoundSocket's Location
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AttackSound, StaticMesh->GetSocketLocation(AttackSoundSocketName));
+}
+
 void ABaseWeapon::Req_SpawnEmitterAtTargetLocation_Implementation(FVector TargetLocation, FRotator TargetRotation)
 {
 	UE_LOG(LogClass, Warning, TEXT("Req_SpawnEmitterAtTargetLocation"));
-
-	//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, TargetLocation, TargetRotation, AttackEffectScale);
 
 	Res_SpawnEmitterAtTargetLocation(TargetLocation, TargetRotation);
 }
@@ -609,14 +619,6 @@ void ABaseWeapon::Req_SpawnEmitterAtTargetLocation_Implementation(FVector Target
 void ABaseWeapon::Res_SpawnEmitterAtTargetLocation_Implementation(FVector TargetLocation, FRotator TargetRotation)
 {
 	UE_LOG(LogClass, Warning, TEXT("Res_SpawnEmitterAtTargetLocation - Start"));
-
-	/*if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
-	{
-		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetPlayerCharacter != OwnerCharacter"));
-		return;
-	}*/
-
-	//Range Weapon Use this function
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, TargetLocation, TargetRotation, AttackEffectScale);
 
@@ -630,15 +632,9 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 	//Check Damage Value
 	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::Apply Damage :: %f"), Damage);
 
-	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::StartLocation %s"), *StartLocation.ToString());
-	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::EndLocation %s"), *EndLocation.ToString());
-
-	//Spawn Target Sound AttackSoundSocket's Location
-	//UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AttackSound, StaticMesh->GetSocketLocation(AttackSoundSocketName));
-
 	//Trace Result Value
 	bool bIsHit;
-	bIsHit = true;
+	bIsHit = false;
 
 	//Set Collision for Trace Function
 	FHitResult AttackHitResult;
@@ -661,6 +657,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 		QueryParamsIgnoredActor.AddIgnoredActor(OwnerCharacter);
 		QueryParamsIgnoredActor.AddIgnoredActor(this);
 
+
 		//Trace by Location Value, Collision
 		bIsHit = GetWorld()->LineTraceSingleByObjectType(AttackHitResult, StartLocation, EndLocation, QueryParams, QueryParamsIgnoredActor);
 
@@ -673,18 +670,14 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 		{
 			UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::BlockingHit == true"));
 			Res_SpawnEmitterAtTargetLocation(AttackHitResult.Location, StaticMesh->GetRelativeRotation());
-
-			//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, AttackHitResult.Location, StaticMesh->GetRelativeRotation(), AttackEffectScale);
-
 		}
 		else
 		{
 			UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::BlockingHit == false"));
 			Res_SpawnEmitterAtTargetLocation(EndLocation, StaticMesh->GetRelativeRotation());
-
-			//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, EndLocation, StaticMesh->GetRelativeRotation(), AttackEffectScale);
-
 		}
+
+		Res_SpawnSoundAtTargetLocation(FVector(0, 0, 0));
 
 	}
 	else
@@ -693,9 +686,11 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 
 		//----------[ Add Ignore Actor ]----------
 		TArray<AActor*> IgnoreActors;
+
 		//----------[ Check Ignore Character Here ]----------
 		IgnoreActors.Add(OwnerCharacter);
 		IgnoreActors.Add(this);
+
 
 		//Start SphereTrace
 		//Color Red = Hit false, Green = Hit true
@@ -715,11 +710,16 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 			FColor::Green,
 			5.f
 		);
+	}
 
+	//Check Click was Right Click
+	if (GetIsLeftClick() == false)
+	{
+		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::GetIsLeftClick == false"));
 
-		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, EndLocation, StaticMesh->GetRelativeRotation(), AttackEffectScale);
-
-
+		//Initialize LeftClickCount 0;
+		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::InitializeLeftClickCount"));
+		Req_InitializeLeftClickCount();
 	}
 
 	//If Trace(Attack) can't hit Anything, return
@@ -745,7 +745,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 	}
 	
 	Res_SpawnEmitterAtTargetLocation(AttackHitResult.Location, StaticMesh->GetRelativeRotation());
-
+	Res_SpawnSoundAtTargetLocation(FVector(0, 0, 0));
 
 	//Check Hit Actor's Name
 	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::Hit Actor :: %s"), *FString(HitTargetObj->GetName()));
@@ -756,20 +756,5 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::ApplyDamage"));
 	//Check ApplyDamage End
 
-
-	//Check Click was Right Click
-	if (GetIsLeftClick() == false)
-	{
-		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::GetIsLeftClick == false"));
-
-		//Initialize LeftClickCount 0;
-		UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::InitializeLeftClickCount"));
-		Req_InitializeLeftClickCount();
-	}
-
-
-	//UE_LOG(LogClass, Warning, TEXT("ApplyDamage End"));
-
 	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor - End"));
-
 }
