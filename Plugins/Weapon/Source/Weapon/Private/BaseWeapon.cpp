@@ -300,13 +300,6 @@ void ABaseWeapon::Event_ClickAttack_Implementation()
 	UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack - Start"));
 	//Click Event
 
-	//Check Weapon's OwnerCharacter is First Index Player
-	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
-	{
-		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetPlayerCharacter != OwnerCharacter"));
-		return;
-	}
-
 	if (bIsRangeWeapon == true)
 	{
 		UE_LOG(LogClass, Warning, TEXT("bIsRangeWeapon::bIsRangeWeapon true"));
@@ -529,6 +522,13 @@ void ABaseWeapon::RangeAttack()
 
 	//----------[ End Calculate Attack Start, End Location ]----------
 
+	//Check Weapon's OwnerCharacter is First Index Player
+	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
+	{
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetPlayerCharacter != OwnerCharacter"));
+		return;
+	}
+
 	//Active Event by Left Click Value
 	//Use Start, End Location is Same, Difference is only Damage
 	if (GetIsLeftClick() == true)
@@ -568,6 +568,13 @@ void ABaseWeapon::CloseAttack()
 	//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, StaticMesh->GetSocketLocation(AttackEffectSocketName), StaticMesh->GetSocketRotation(AttackEffectSocketName), AttackEffectScale);
 	//Req_SpawnEmitterAtTargetLocation(StaticMesh->GetSocketLocation(AttackEffectSocketName), StaticMesh->GetSocketRotation(AttackEffectSocketName));
 
+	//Check Weapon's OwnerCharacter is First Index Player
+	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
+	{
+		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetPlayerCharacter != OwnerCharacter"));
+		return;
+	}
+
 	//Active Event by Left Click Value
 	//Use Start, End Location is Same, Difference is only Damage
 	if (GetIsLeftClick() == true)
@@ -603,11 +610,12 @@ void ABaseWeapon::Res_SpawnEmitterAtTargetLocation_Implementation(FVector Target
 {
 	UE_LOG(LogClass, Warning, TEXT("Res_SpawnEmitterAtTargetLocation - Start"));
 
-	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
+	/*if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != OwnerCharacter)
 	{
 		UE_LOG(LogClass, Warning, TEXT("Event_ClickAttack::GetPlayerCharacter != OwnerCharacter"));
 		return;
-	}
+	}*/
+
 	//Range Weapon Use this function
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, TargetLocation, TargetRotation, AttackEffectScale);
@@ -626,7 +634,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::EndLocation %s"), *EndLocation.ToString());
 
 	//Spawn Target Sound AttackSoundSocket's Location
-	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AttackSound, StaticMesh->GetSocketLocation(AttackSoundSocketName));
+	//UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AttackSound, StaticMesh->GetSocketLocation(AttackSoundSocketName));
 
 	//Trace Result Value
 	bool bIsHit;
@@ -708,6 +716,7 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 			5.f
 		);
 
+
 		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackEffect, EndLocation, StaticMesh->GetRelativeRotation(), AttackEffectScale);
 
 
@@ -735,6 +744,9 @@ void ABaseWeapon::Req_ApplyDamageToTargetActor_Implementation(FVector StartLocat
 		return;
 	}
 	
+	Res_SpawnEmitterAtTargetLocation(AttackHitResult.Location, StaticMesh->GetRelativeRotation());
+
+
 	//Check Hit Actor's Name
 	UE_LOG(LogClass, Warning, TEXT("ApplyDamageToTargetActor::Hit Actor :: %s"), *FString(HitTargetObj->GetName()));
 
