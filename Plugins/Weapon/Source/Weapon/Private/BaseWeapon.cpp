@@ -237,6 +237,16 @@ void ABaseWeapon::Event_LeftClickAttack_Implementation(bool IsPressed)
 		AddLeftClickCount();
 		UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::LeftClickCount ( %d )"), GetLeftClickCount());
 
+		if (GetLeftClickCount() > GetMaxLeftClickCount())
+		{
+			return;
+		}
+
+		//FString MontageName;
+		//MontageName = "AttackMontage";
+		//MontageName.Append(FString::FromInt(GetLeftClickCount()));
+		//UE_LOG(LogClass, Warning, TEXT("Event_LeftClickAttack::MontageName ( %s )"), *MontageName);
+
 		Req_PlayAttackAnimMontage(AttackMontage);
 
 		//Left Click is true

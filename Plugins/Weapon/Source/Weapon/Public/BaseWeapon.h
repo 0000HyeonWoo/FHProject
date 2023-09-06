@@ -251,16 +251,16 @@ public:
 	UAnimMontage* AttackMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
-	UAnimMontage* Combo1_AttackMontage;
+	UAnimMontage* AttackMontage1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
-	UAnimMontage* Combo2_AttackMontage;
+	UAnimMontage* AttackMontage2;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
-	UAnimMontage* Combo3_AttackMontage;
+	UAnimMontage* AttackMontage3;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
-	UAnimMontage* Combo4_AttackMontage;
+	UAnimMontage* AttackMontage4;
 
 	// Use When Special Attack - Right Click
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage")
