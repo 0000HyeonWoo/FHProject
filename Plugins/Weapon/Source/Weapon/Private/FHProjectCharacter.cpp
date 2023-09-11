@@ -83,7 +83,7 @@ AFHProjectCharacter::AFHProjectCharacter()
 	GetMesh()->SetRelativeRotation(NewMeshRotation);
 
 	// Set Character Can Crouch
-	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+	//GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
 	//Set Weapon Socket Name
 	//If you want to change Socket Name, Edit like this -> FName(TEXT("MySocketName"))
@@ -171,11 +171,11 @@ void AFHProjectCharacter::Res_DoRollMove_Implementation()
 	}
 
 	// if Character Is Crouched = return
-	if (bIsCrouched == true)
+	/*if (bIsCrouched == true)
 	{
 		UE_LOG(LogClass, Warning, TEXT("DoRollMove::IsCrouched == true"));
 		return;
-	}
+	}*/
 
 	// If StandToRollMontage Is Not Valid = return
 	if (IsValid(StandToRollMontage) == false)
@@ -539,8 +539,8 @@ void AFHProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AFHProjectCharacter::StopSprintInput);
 
 		//Crouch
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &AFHProjectCharacter::CrouchInput);
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AFHProjectCharacter::StopCrouchInput);
+		//EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &AFHProjectCharacter::CrouchInput);
+		//EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AFHProjectCharacter::StopCrouchInput);
 
 		//Get Item
 		EnhancedInputComponent->BindAction(GetItemAction, ETriggerEvent::Triggered, this, &AFHProjectCharacter::GetItemInput);
@@ -640,7 +640,7 @@ void AFHProjectCharacter::StopSprintInput(const FInputActionValue& Value)
 	Req_SetMaxWalkSpeed(500.0f);
 }
 
-void AFHProjectCharacter::CrouchInput(const FInputActionValue& Value)
+/*void AFHProjectCharacter::CrouchInput(const FInputActionValue& Value)
 {
 	//Crouch Action Input
 	UE_LOG(LogClass, Warning, TEXT("CrouchInput"));
@@ -661,9 +661,9 @@ void AFHProjectCharacter::CrouchInput(const FInputActionValue& Value)
 	// Do Crouch Move
 	Crouch();
 	
-}
+}*/
 
-void AFHProjectCharacter::StopCrouchInput(const FInputActionValue& Value)
+/*void AFHProjectCharacter::StopCrouchInput(const FInputActionValue& Value)
 {
 	//StopCrouch Action Input
 	UE_LOG(LogClass, Warning, TEXT("StopCrouchInput"));
@@ -684,7 +684,7 @@ void AFHProjectCharacter::StopCrouchInput(const FInputActionValue& Value)
 	// Do UnCrouch Move
 	UnCrouch();
 	
-}
+}*/
 
 void AFHProjectCharacter::GetItemInput(const FInputActionValue& Value)
 {

@@ -48,8 +48,8 @@ class AFHProjectCharacter : public ACharacter, public IWeaponInterface
 	class UInputAction* SprintAction;
 
 	/** Crouch Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* CrouchAction;
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* CrouchAction; */
 
 	/** Get Item Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -112,10 +112,10 @@ protected:
 	void StopSprintInput(const FInputActionValue& Value);
 
 	/** Called for Crouch input */
-	void CrouchInput(const FInputActionValue& Value);
+	//void CrouchInput(const FInputActionValue& Value);
 
 	/** Called for StopCrouch input */
-	void StopCrouchInput(const FInputActionValue& Value);
+	//void StopCrouchInput(const FInputActionValue& Value);
 
 	/** Called for Get Item input */
 	void GetItemInput(const FInputActionValue& Value);
