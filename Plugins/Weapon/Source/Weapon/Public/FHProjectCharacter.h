@@ -276,11 +276,11 @@ public:
 
 	//Return Camera Location
 	UFUNCTION(BlueprintPure)
-	FVector GetCameraLocation() { return GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation(); };
+	FORCEINLINE FVector GetCameraLocation() const { return GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation(); };
 
 	//Return Camera Forward Vector
 	UFUNCTION(BlueprintPure)
-	FVector GetCameraForwardVector() { return GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetActorForwardVector(); };
+	FORCEINLINE FVector GetCameraForwardVector() const { return GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetActorForwardVector(); };
 
 	AActor* FindWeapon();
 

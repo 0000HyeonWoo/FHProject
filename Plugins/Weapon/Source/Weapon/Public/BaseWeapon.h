@@ -154,10 +154,10 @@ public:
 	//----------[ Left Click ]----------
 	//Return LeftClickCount
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Data")
-	int32 GetLeftClickCount() { return LeftClickCount; };
+	FORCEINLINE int32 GetLeftClickCount() const { return LeftClickCount; };
 
 	//Return MaxLeftClickCount
-	int32 GetMaxLeftClickCount() { return MaxLeftClickCount; };
+	FORCEINLINE int32 GetMaxLeftClickCount() const { return MaxLeftClickCount; };
 
 	//Set MaxLeftClickCount
 	void SetMaxLeftClickCount(int32 NewMaxLeftClickCount) { MaxLeftClickCount = NewMaxLeftClickCount; };
@@ -176,14 +176,14 @@ public:
 
 
 	//Return IsLeftClick Value
-	bool GetIsLeftClick() { return bIsLeftClick; };
+	FORCEINLINE bool GetIsLeftClick() const { return bIsLeftClick; };
 
 	void SetIsLeftClick(bool NewValue) { bIsLeftClick = NewValue; };
 
 
 	//----------[ Attack Damage ]----------
 	//Get Click Attack Damage
-	int32 GetClickAttackDamage() { return ClickAttackDamage; };
+	FORCEINLINE int32 GetClickAttackDamage() const { return ClickAttackDamage; };
 	
 	//Set Click Attack Damage
 	void SetClickAttackDamage(int32 NewClickAttackDamage) { ClickAttackDamage = NewClickAttackDamage; };
@@ -192,7 +192,7 @@ public:
 	void SetMaxRightClickDamage(float NewMaxRightClickDamage) { MaxRightClickDamage = NewMaxRightClickDamage; };
 
 	//Return MaxRightClickDamage
-	float GetMaxRightClickDamage() { return MaxRightClickDamage; };
+	FORCEINLINE float GetMaxRightClickDamage() const { return MaxRightClickDamage; };
 
 
 	//----------[ Effect Scale ]----------
