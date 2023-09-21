@@ -29,6 +29,18 @@ void UIngameUserWidget::NativeConstruct()
 
 	ScrollBox = Cast<UScrollBox>(GetWidgetFromName(TEXT("ChatScroll")));
 
+	ALobbyController* PC = Cast<ALobbyController>(GetOwningPlayer());
+	if (PC)
+	{
+		UMyGameInstance* GI = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+		if (GI)
+		{
+			//FString Temp = FString::Printf(TEXT("%s"), *GI->Username);
+
+			UE_LOG(LogClass, Warning, TEXT("User Name : %s"), *GI->Username);
+			//PC->C2S_SendMessage(FText::FromString(Temp));
+		}
+	}
 }
 
 void UIngameUserWidget::OnChangedText(const FText& Text)

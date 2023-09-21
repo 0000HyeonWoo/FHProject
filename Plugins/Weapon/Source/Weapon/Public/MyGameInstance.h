@@ -17,4 +17,7 @@ class WEAPON_API UMyGameInstance : public UGameInstance
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	FString Username;
+
+public:
+	FORCEINLINE FString GetUsername() const { return *Username; };
 };

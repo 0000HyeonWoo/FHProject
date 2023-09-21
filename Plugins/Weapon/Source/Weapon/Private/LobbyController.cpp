@@ -3,27 +3,28 @@
 
 #include "LobbyController.h"
 #include "Blueprint/UserWidget.h"
-
+#include "MyGameInstance.h"
+#include "Kismet/GamePlaystatics.h"
 
 void ALobbyController::BeginPlay()
 {
-    Super::BeginPlay();
+	Super::BeginPlay();
 
-    if (IsLocalPlayerController() == false)
-    {
-        return;
-    }
+	if (IsLocalPlayerController() == false)
+	{
+		return;
+	}
 
-    LobbyWidget = CreateWidget<UUserWidget>(GetWorld(), LobbyWidgetClass);
-    LobbyWidget->AddToViewport();
+	LobbyWidget = CreateWidget<UUserWidget>(GetWorld(), LobbyWidgetClass);
+	LobbyWidget->AddToViewport();
 
-    APlayerController* player0 = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
+	APlayerController* player0 = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
 
-    if (player0)
-    {
-        player0->SetInputMode(FInputModeGameAndUI());
-        player0->bShowMouseCursor = true;
-    }
+	if (player0)
+	{
+		player0->SetInputMode(FInputModeGameAndUI());
+		player0->bShowMouseCursor = true;
+	}
 
 
 }
